@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "processing_resolution": {"width_px": 640, "height_px": 480, "preserve_aspect_ratio": true},
+  "metric_calibration": {
+    "enabled": false,
+    "reference_gauge_m": null,
+    "reference_gauge_standard_uncertainty_m": null,
+    "homography_image_to_track": null,
+    "reference_image_dimensions_px": null,
+    "note": "L'écartement est annoncé constant, mais sa valeur pour ce réseau reste à confirmer. VGA ne fixe pas l'échelle métrique."
+  },
+  "annotation_uncertainty": {"boundary_standard_uncertainty_px": null, "boundary_covariance_px2": null},
+  "output_coordinates": "original_image_pixels"
+}

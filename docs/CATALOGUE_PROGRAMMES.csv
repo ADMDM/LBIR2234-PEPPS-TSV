@@ -1,0 +1,140 @@
+chemin,description,fonctions
+railtsv/__init__.py,TSV DeepLabV3+ development baseline.,
+railtsv/adaptive_smoothing.py,"Causal speed-adaptive smoothing of observed paired boundaries.
+
+Inspired by Casiez et al. (CHI 2012), https://gery.casiez.net/1euro/ .
+Coordinates and derivatives are normalized by image width. A shared alpha
+keeps both edges ordered and the centre exactly at their midpoint.
+This display filter neither recovers hidden track nor selects a switch route.",AdaptiveProfileSmoother
+railtsv/annotation_config.py,"Portable pointer to the active annotation batch, with legacy fallback.",_data_path; active_batch; active_task; active_validation; latest_returns
+railtsv/axis_metrics.py,Image-space axis errors against reviewed corridor references.,AxisMetrics
+railtsv/cli.py,Voir fonctions et guide de démarrage.,main
+railtsv/common.py,Voir fonctions et guide de démarrage.,device; seed_all; new_dir; dump; sha256; _image_array; rgb_read; mask_read; read_manifest; write_manifest; check_disjoint
+railtsv/data.py,Voir fonctions et guide de démarrage.,letterbox; normalize; augmentation; RailDataset
+railtsv/drafts.py,Editable polygon suggestions; never claim that a prediction is reviewed.,draft_annotation
+railtsv/egopath.py,"Conservative masks between public annotated rail polylines.
+
+This generic target does not certify TSV inner-rail faces. Only rows with
+both individually continuous, ordered rail traces receive supervision.",egopath_mask
+railtsv/engine.py,Voir fonctions et guide de démarrage.,environment; check_device; validate; train; predict_image; infer; evaluate
+railtsv/frame_clock.py,"Validate a supplied per-source-frame physical clock before video fusion.
+
+Playback seconds locate a displayed frame. UTC elapsed seconds drive motion
+and smoothing. A missing speed is never replaced with zero or extrapolated.",load_frame_telemetry
+railtsv/geometry.py,"Observed image-space rail pair and exact midpoints, with explicit gaps.",axis_profile; corridor_profile; draw_axis; draw_corridor_limits; TemporalGuard
+railtsv/inference_region.py,"Explicit source-image region, with predictions restored to original pixels.",predict_region
+railtsv/live_preview.py,"Local browser preview of ongoing processing, without claiming real-time speed.",LivePreview
+railtsv/metric_geometry.py,"Explicitly separate nominal-gauge scenarios from planar calibration.
+
+No function here silently turns an assumed gauge into a measured gauge.
+Plane coordinates require measured correspondences and compatible undistorted
+image coordinates. A fitted homography alone is not field validation.",gauge_scenario; project_plane; fit_plane_calibration; project_with_pixel_uncertainty
+railtsv/metrics.py,Voir fonctions et guide de démarrage.,Metrics
+railtsv/model.py,Voir fonctions et guide de démarrage.,build_model; freeze_batchnorm; dice_ce; load_checkpoint; transfer
+railtsv/prepare.py,Voir fonctions et guide de démarrage.,label_mapping; remap; index_files; prepare_railsem; split_dataset; extract_frames
+railtsv/railsem.py,"RailSem19 track-area pretraining, paper splits and explicit TSV transfer.",track_mapping; track_mask; paper_splits; prepare_track_dataset; make_preview; write_pretraining_state; tsv_initialization
+railtsv/second_export.py,"One row per second, preserving complete frame records and an axis snapshot.",_repeated; _axis_records; export_axis_frames; export_seconds
+railtsv/settings.py,Processing resolution is separate from an unestablished metric calibration.,processing_resolution
+railtsv/smoothing.py,Optional causal display smoothing; raw predictions stay immutable.,ProfileSmoother; with_measurement_row; export_smoothed
+railtsv/telemetry.py,"Indicative image-space measurements, never physical gauge or accuracy.",_interval; measure_section; _corridor_interval; measure_corridor; draw_telemetry
+railtsv/validation_protocol.py,"Grouped evidence, explicit abstention and final-capture separation.",aggregate_axis_errors; final_split_guard; branch_metrics; profile_alerts
+railtsv/video.py,Predict every video frame and encode a playable MP4 without frame sampling.,overlay_frame; probe_timing; timeline_indices; encoding_command; verify_encoded; recover_video; infer_video
+scripts/after_annotation.py,"Check assigned lots, snapshot annotations and train with a held-out capture.",collect; print_status; snapshot; main
+scripts/annotate_active.py,Open an assigned lot from the active annotation batch.,
+scripts/annotate_supplemental.py,"Revoir les dix anciens tracés convertis, comme complément facultatif.",
+scripts/annotate_validation.py,"Open validation annotations for the active task, keeping training separate.",
+scripts/benchmark_stability.py,Replay existing observations; compare filters without rerunning the model.,run
+scripts/build_training_comparison.py,Compare two real TSV models on the same frozen references and package outputs.,csv_rows; build
+scripts/check_mps.py,Convenience wrapper for railtsv check.,
+scripts/compare_double_review.py,Compare two independent reviewed Labelme corridors; neither is ground truth.,compare
+scripts/compare_egopath_experiment.py,"Controlled local evaluation and videos for the RailSem19 ego-path experiment.
+
+No training labels are created here. Pixels, timestamps, coverage and missing
+predictions remain explicit. A lower frame-to-frame variation is not accuracy.",readcsv; number; errstats; evaluate_one; savefig; compare_validation; model_section; render_pair; video_comparisons; compare_stability; main
+scripts/diagnostic_axes_20261018/aligner_vitesse.py,"Join explicit speed telemetry to video-frame times without extrapolation.
+
+Input telemetry CSV: time_s,speed (or named columns). time_s is measured in
+seconds in the telemetry clock. video_time = telemetry_time + explicit offset.
+No clock offset, speed unit or physical speed is inferred from image width.",read_samples; SpeedTimeline; align; main
+scripts/diagnostic_axes_20261018/axes_eval_20261018.py,Evaluate public-only ego-path and TSV models on frozen references; no training.,indexed; reference_profile; spatial_profile; stats; main
+scripts/diagnostic_axes_20261018/axes_export_20261018.py,Aligned axis/vector interchange and controlled smoothing/fusion diagnostics.,csvrows; vector_points; compare_validation; series_exports; smoothing_tests; figures; main
+scripts/diagnostic_axes_20261018/axes_public_test_20261018.py,"Frozen 60-image public holdout diagnostic, sampled before any predictions.",main
+scripts/diagnostic_axes_20261018/axes_public_vga_control.py,Voir fonctions et guide de démarrage.,
+scripts/diagnostic_axes_20261018/integrate_record_gps.py,Exact frame-index GPS join for the supplied TSV_record movie (time-lapse).,read; distance; main
+scripts/diagnostic_axes_20261018/lire_axes_csv.py,"Extract one synchronized frame for fusion, using only Python's standard library.",extract_frame; main
+scripts/diagnostic_axes_20261018/test_speed_alignment.py,Voir fonctions et guide de démarrage.,TestSpeedAlignment
+scripts/diagnostic_axes_20261018/verify_axes_20261018.py,Independent arithmetic and interchange checks; no inference rerun.,read; main
+scripts/diagnostic_plots.py,Scientific figures for corridor diagnostics; training and validation kept explicit.,write_csv; compare_profiles; image_metrics; main
+scripts/evaluate.py,Convenience wrapper for railtsv evaluate.,
+scripts/export_labelme.py,Export reviewed Labelme polygons to PNG IDs without importing Labelme.,rasterize; main
+scripts/export_reviewed_challenge.py,Freeze reviewed reinforcement/control labels without changing the active model.,export
+scripts/extract_frames.py,Convenience wrapper for railtsv extract.,
+scripts/fiabilisation_20261018/add_overlay_speed.py,"Add explicitly experimental interval-mean GPS speed to the unreleased V2.
+
+19 displayed DMS/time anchors were visually read from original decoded crops.
+OCR is kept as evidence only: it produced false digits and is not trusted blindly.
+No instantaneous speed, UTC, metric rail geometry or instrument uncertainty is claimed.",distance_m; build; at_frame; sha; main
+scripts/fiabilisation_20261018/analyze_gps_overlay.py,"Audit OCR GPS; experimental finite-window speed, never measured instantaneous speed.",distance
+scripts/fiabilisation_20261018/benchmark_pipeline.py,"Measure the actual frozen TSV pipeline on this Mac, with synchronized MPS timings.",sync
+scripts/fiabilisation_20261018/build_two_video_package.py,"One selected team output on two named videos, with exact alignment evidence.",dump; table; read; preserve_copy; true
+scripts/fiabilisation_20261018/extract_common_frames.py,"Extract exact shared inputs: normalize timeline BEFORE selecting frames.
+
+Requires numpy, Pillow, imageio-ffmpeg. No model or training dependencies.
+The supplied source SHA256 must match; annotated output videos are not inputs.",digest; extract
+scripts/fiabilisation_20261018/extract_gps_overlay.py,Extract the native bottom-right GPS overlay once per normalized video second.,
+scripts/fiabilisation_20261018/finalize_two_video_package.py,Document and verify the two-video handoff before zipping it.,sha; dump; read
+scripts/fiabilisation_20261018/fix_challenge_export.py,Voir fonctions et guide de démarrage.,
+scripts/fiabilisation_20261018/lire_une_frame.py,Read one team's axis vector and available speed/error for one exact frame.,
+scripts/fiabilisation_20261018/match_reference_frames.py,Locate existing reviewed stills in the exact normalized video decoding.,
+scripts/fiabilisation_20261018/render_selected_axes.py,Render the selected RAW CSV coordinates on both original videos; no model.,rows
+scripts/fiabilisation_20261018/replay_experiment.py,Fixed-budget three-seed adaptation pilot. Never reads the public test split.,dump; order; synchronize; evaluate
+scripts/first_annotation_trial.py,"Premier apprentissage sur dix annotations, sans validation indépendante.",prepare; run_command; select_video; gallery; main
+scripts/fit_planar_calibration.py,"Fit measured planar references, never an assumed rail width.",main
+scripts/infer.py,Convenience wrapper for railtsv infer.,
+scripts/infer_video.py,Produire un MP4 avec les rails prédits sur chaque image d'une vidéo.,
+scripts/livraison_gabarit_20261018/build_delivery.py,Build an auditable delivery from completed real inference and frozen evaluations.,sha; rows; dump; indexed; main
+scripts/livraison_gabarit_20261018/finalize_delivery.py,"Verify delivered data, create real examples, then package with checksums.",sha; rows; dump; save_rows; main
+scripts/livraison_gabarit_20261018/lire_frame.py,"Extraire une frame du nouveau CSV de points, sans bibliothèque externe.",main
+scripts/livraison_gabarit_20261018/public_reserved.py,"Evaluate the remaining public holdout once, with immutable existing models.",main
+scripts/livraison_gabarit_20261018/verifier_paquet.py,Vérifier l'intégrité de tous les fichiers après téléchargement/décompression.,main
+scripts/livraison_gabarit_20261018/verify_public_results.py,Independent arithmetic check of frozen public results and exportable figures.,rows; main
+scripts/make_smoke_data.py,"Synthetic fixtures, never a railway validation dataset.",main
+scripts/merge_team_annotations.py,Validate ownership and merge returned Labelme lots into a NEW session.,inspect; merge
+scripts/open_results.py,"Create a simple index of actual local results, with optional browser opening.",build_index
+scripts/package_corridor_lots.py,"Create portable, disjoint annotation ZIPs, dereferencing canonical images.",package
+scripts/package_gabarit_export.py,Inspect a completed video export and publish local raw/smoothed diagnostics.,fig
+scripts/preannotate_lots.py,Suggest contours without replacing human work or checking reviewed.,targets; main
+scripts/prepare_challenge_review.py,"New Drive frames, provenance, blind annotation files and model previews.",prepare
+scripts/prepare_corridor_annotations.py,"Clone assigned rail lots into unreviewed corridor suggestions, without editing sources.",convert_rails_annotation; _link_image; _clone_session; prepare
+scripts/prepare_railsem.py,Convenience wrapper for railtsv prepare-railsem.,
+scripts/prepare_railsem_egopath.py,Prepare public ego-path annotations against already imported RailSem19 images.,prepare
+scripts/prepare_team_annotations.py,Extract new source images and prepare two disjoint portable Labelme lots.,plan_indices; write_csv; make_lot_files; prepare
+scripts/prepare_three_lots.py,"Prepare 150 unannotated images in three lots, with capture provenance.",indices; extract; assign; prepare
+scripts/prepare_two_reinforcement_lots.py,"Two disjoint, portable 30-image lots from already verified Drive media.
+
+The independent control capture is referenced for future export, never sampled.
+Existing labels and baseline snapshots are read only. No model prediction is
+used as annotation, no reviewed flag is set, and no training is launched.",sha; write_json; selections; contact; launcher; windows; instructions; lot_html; main
+scripts/prepare_video_annotations.py,Extract spaced frames and create a new Labelme annotation session.,main
+scripts/pretrain_railsem.py,"Prepare official RailSem19 paper splits, pretrain and register the checkpoint.",main
+scripts/project_status.py,"Read actual project provenance, annotations and diagnostic values without training.",read; rows; sha; snapshot; main
+scripts/receive_team_annotations.py,Receive a collaborator's JSON archive without extracting arbitrary ZIP paths.,returned_json; receive; main
+scripts/recover_video.py,Récupérer les prédictions d'une vidéo dont les horodatages ont des intervalles manquants.,
+scripts/render_stability_comparison.py,"Side-by-side replay of raw, EMA and adaptive observed corridor geometry.",render
+scripts/run_egopath_experiment.py,"Launch an isolated, reproducible ego-path transfer experiment.",main
+scripts/show_latest_figures.py,Show the current scientific figure folder from the verified project pointer.,
+scripts/split_dataset.py,Convenience wrapper for railtsv split.,
+scripts/summarize_validation.py,"Create a readable, auditable local report for corridor validation figures.",summarize
+scripts/test_externe_metres_20261018/audit_outputs.py,Read-only scientific/algebra audit; writes a new audit record and camera strata.,rows; sha
+scripts/test_externe_metres_20261018/build_report.py,"Publish source-backed figures, a local report and the V3 exchange guide.",rows; load; table; figure; page; save
+scripts/test_externe_metres_20261018/evaluate_locked.py,Frozen external rail-pair test plus separately labelled development stress tests.,write_csv; prediction; points; cross; external_reference; score; overlay
+scripts/test_externe_metres_20261018/export_metric_start.py,V3 adds gap-aware travel distance and explicitly conditional lateral metre proxies.,read; number; write; link_tree
+scripts/test_externe_metres_20261018/finalize_delivery.py,"Verify and package V3, retain V2 in archives, update the project entry points.",sha; dump; replace
+scripts/test_externe_metres_20261018/freeze_and_download.py,Freeze external evaluation before inference; fetch only selected public images.,sha; worker
+scripts/test_externe_metres_20261018/new_video_examples.py,"Two untouched institutional clips, frozen detector, supplied metric pose reference.",
+scripts/test_externe_metres_20261018/remote_zip.py,Read selected members of a public ZIP via strict HTTP byte ranges.,RemoteZipFile; download_small
+scripts/test_externe_metres_20261018/render_metric_video.py,Render the selected RAW CSV coordinates on both original videos; no model.,rows
+scripts/train.py,Convenience wrapper for railtsv train.,
+scripts/trial_corridor_lot.py,"Explicit trial on one complete reviewed lot, without independent validation.",verify_lot; prepare_trial; run_logged; gallery; main
+scripts/validation_diagnostic.py,Evaluate the existing pilot and create its readable validation report.,
+scripts/video_with_info.py,"Créer une nouvelle vidéo avec les informations indicatives, sans entraînement.",model_candidates; result_page; main

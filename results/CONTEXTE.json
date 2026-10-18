@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-18",
+  "training_reviewed": {
+    "A": 50,
+    "B": 30,
+    "C": 50
+  },
+  "development_tsv_images": 12,
+  "development_tsv_captures": 1,
+  "external_images": 96,
+  "selected_model": "DeepLabV3Plus ResNet50, public ego-path then TSV",
+  "selected_checkpoint_sha256": "ae33ea22f1e8eead7e28349304d81a481b3bac3409110ef9dafc60a20b651abd",
+  "external_scope": "Locked public test; not an independent TSV field test",
+  "metric_status": "conditional gauge estimates; no validated physical uncertainty",
+  "raw_data_in_repository": false
+}

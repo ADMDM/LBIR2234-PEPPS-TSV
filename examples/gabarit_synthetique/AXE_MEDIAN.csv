@@ -1,0 +1,4 @@
+video_id,frame_index,video_time_s,image_width_px,image_height_px,segment_id,point_index,x_px,y_px,left_x_px,right_x_px,width_px,train_speed_m_s,error_abs_px,metric_status
+synthetic_demo,0,0.0,640,480,0,0,320,400,260,380,120,,,not_calibrated
+synthetic_demo,0,0.0,640,480,0,1,320,408,258,382,124,,,not_calibrated
+synthetic_demo,1,0.1,640,480,0,0,321,400,261,381,120,,,not_calibrated

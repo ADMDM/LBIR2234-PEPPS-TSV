@@ -1,0 +1,10 @@
+mesure,valeur,unite,population,statut
+MAE axe A appariée,4.4220324268,px,12 images / 1171 sections communes,developpement
+MAE axe C appariée,3.7714591036,px,12 images / 1171 sections communes,developpement
+gain MAE,14.712088479930973,pourcent,mêmes images et sections A/C,developpement
+MAE axe C export V3,3.81634576441315,px,12 images / 1229 sections,developpement
+MAE équivalente si G1067,2.4819,cm,12 images / 1139 sections convertibles,hypothese_non_calibree
+couverture externe totale,77.4838,pourcent sections,96 images / 71 avec references eligibles,test_externe_fige
+frames TSV_record,7608,frames,video normalisee,export_verifie
+frames 03676,5399,frames,video normalisee dont 94 repetitions,export_verifie
+tests logiciels,120,tests,code actuel,reussi

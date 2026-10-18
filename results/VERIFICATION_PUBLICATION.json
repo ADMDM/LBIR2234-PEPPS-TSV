@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-18",
+  "scope": "Publication copy; reusable code, documentation and aggregate results only",
+  "software_tests": 122,
+  "software_tests_status": "passed",
+  "tests_duration_s": 3.94,
+  "test_environment": "Existing project Python 3.12 on Apple Silicon; publication copy imported and tested",
+  "wheel_build": "passed, no dependency downloads",
+  "fresh_install_other_platform": "not_run",
+  "github_actions": "prepared_not_run",
+  "secret_and_private_path_scan": "no matches in selected files",
+  "scan_limit": "Pattern scan and selected file inventory; not a mathematical guarantee",
+  "real_data_annotations_gps_weights_included": false,
+  "binary_content": "Only 9 aggregate figures in PNG; SVG versions included",
+  "changes": [
+    "Mac-specific paths removed from publication copy",
+    "Private Drive URLs removed",
+    "Burned-in real GPS anchors removed; required local input CSV",
+    "Two tests added for local GPS input and no extrapolation"
+  ],
+  "original_research_results": "unchanged"
+}

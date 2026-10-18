@@ -1,0 +1,4 @@
+image,mask,sequence
+../data/annotations/images/trajet01_0001.png,../data/annotations/masks/trajet01_0001.png,trajet01
+../data/annotations/images/trajet02_0001.png,../data/annotations/masks/trajet02_0001.png,trajet02
+../data/annotations/images/trajet03_0001.png,../data/annotations/masks/trajet03_0001.png,trajet03

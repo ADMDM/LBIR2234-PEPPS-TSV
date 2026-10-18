@@ -1,0 +1,47 @@
+# Environments, caches and machine settings
+.venv
+.labelme-venv
+venv/
+.cache/
+.local/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.DS_Store
+.vscode/
+.env
+.env.*
+!.env.example
+*.log
+# Local railway data, annotations, telemetry and results
+/data/*
+!/data/README.md
+/runs/*
+!/runs/README.md
+/outputs/*
+!/outputs/README.md
+/02_A_PARTAGER/
+/03_RESULTATS/
+/04_ANNOTATIONS/
+/archives/
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.mp4
+*.avi
+*.AVI
+*.mov
+*.MOV
+*.zip
+*.gpx
+*.gps.csv
+# Per-machine active pointers
+/configs/annotation_batch.json
+/configs/diagnostic_target.json
+/configs/railsem_pretraining.json
+/configs/railsem_egopath_pretraining.json
+/data/telemetry/

@@ -1,0 +1,9 @@
+auto_save: false
+flags:
+  reviewed: false
+labels:
+  - rail_left
+  - rail_right
+  - ignore
+sort_labels: false
+validate_label: exact
