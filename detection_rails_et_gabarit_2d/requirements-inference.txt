@@ -1,0 +1,15 @@
+# Versions de l'environnement ayant calculé cette livraison, Python 3.12 arm64.
+# Inférence seulement ; les dépendances d'entraînement sont dans chaque module.
+torch==2.15.0
+torchvision==0.29.2
+segmentation-models-pytorch==0.5.0
+ultralytics==8.4.192
+opencv-python==5.0.0.93
+numpy==2.5.4
+Pillow==13.0.0
+av==19.0.2
+PyYAML==6.0.3
+scipy==1.18.1
+lap==0.5.13
+faster-coco-eval==1.8.0
+pytest==9.2.0

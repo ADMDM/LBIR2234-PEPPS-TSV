@@ -1,0 +1,24 @@
+{
+  "interval_s": 1.0,
+  "roi": [
+    0.78125,
+    0.8333333333,
+    1.0,
+    1.0
+  ],
+  "scale": 3,
+  "min_confidence": 0.75,
+  "max_speed_m_s": 100,
+  "jump_tolerance_m": 20,
+  "engine": "apple_vision",
+  "note": "ROI relative; GPS text must use N/S and E/W. Thresholds are engineering safeguards, not confidence intervals.",
+  "coordinate_format": "tsv_dms",
+  "coordinate_crop": [
+    0.1587301587,
+    0.4814814815,
+    1,
+    0.7037037037
+  ],
+  "consensus_variants": true,
+  "isolated_excess_m": 20
+}

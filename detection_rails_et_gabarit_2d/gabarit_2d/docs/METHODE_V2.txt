@@ -1,0 +1,219 @@
+GABARIT 2D — POURQUOI ET COMMENT FONCTIONNE LA VERSION 2
+Date de préparation : 9 novembre 2026
+
+DÉCISION FINALE
+La livraison conserve les objets de V1 et corrige seulement les hypothèses de
+train ambiguës. Aucun gain sur les petits objets n'a été validé. Le premier
+essai de tuiles et les deux grilles exploratoires de 12 configurations chacune
+ont été rejetés selon leurs critères annoncés. Les sections 2, 3 et 5 décrivent
+ces expériences, qui restent disponibles pour analyse mais ne sont pas activées
+dans la vidéo finale. Aucun poids n'a été réentraîné durant ces comparaisons.
+
+1. LE PROBLÈME TRAITÉ
+
+Dans une image large, un petit déchet peut n'occuper que quelques pixels.
+Lorsqu'on réduit toute l'image pour l'envoyer au réseau, il devient encore plus
+petit. Une bonne détection des personnes ou des véhicules ne garantit donc pas
+une bonne détection des objets minuscules entre les rails.
+
+La V1 utilisait deux réseaux de segmentation d'instances : un modèle général
+YOLO26s-seg public et un modèle YOLO26n-seg adapté aux déchets TACO. Segmenter une
+instance signifie prédire les pixels d'un objet distinct, au lieu de dessiner
+seulement un rectangle. Le modèle spécialisé a été entraîné durant 12 époques
+sur 1 033 images, avec 288 images de validation et 173 images de test. Ces
+comptes concernent les 1 494 photos retenues après contrôle des conversions.
+
+La V2 réutilise les mêmes poids. Il s'agit d'une modification de l'inférence,
+c'est-à-dire de l'application du modèle, et non d'un nouvel apprentissage.
+
+2. VUE GLOBALE ET VUES RAPPROCHÉES
+
+Le CSV des rails fournit les limites intérieures et l'axe médian dans l'image
+originale. Les lignes valides permettent de reconstruire le couloir observé.
+Le programme reprend les masques V1 déjà calculés et vérifiés comme vue globale.
+Il découpe en plus la zone du couloir, avec une marge, en fenêtres qui se
+chevauchent. Une fenêtre de 640 pixels, envoyée au réseau avec une taille
+d'entrée de 960, donne davantage de place aux petits détails qu'une image
+entière réduite à 960. L'échelle exacte dépend aussi de la forme de la fenêtre.
+
+Le paramètre de chevauchement de 25 % définit le pas régulier. La dernière
+fenêtre est décalée pour rester dans l'image et peut donc recouvrir davantage
+la précédente. Ce recouvrement limite les objets toujours coupés sur un bord,
+sans garantir leur détection. L'agrandissement ne recrée pas
+des détails absents de l'image d'origine. La vue globale garde le contexte et
+les objets plus grands. Les contours de chaque fenêtre sont ensuite replacés
+dans les coordonnées originales.
+
+Les paramètres effectivement utilisés se lisent dans MANIFESTE.json. Le premier
+protocole exigeait une amélioration d'AP_small et une perte d'AP50_95 globale
+d'au plus 0,01. Les tuiles 640 ont échoué : AP globale 34,55 % -> 32,70 % ;
+AP_small 10,26 % -> 10,90 % ; précision au seuil 0,15 : 51,92 % -> 21,16 %.
+Les objets petits étaient plus souvent retrouvés, mais les faux positifs
+passaient de 413 à 2 150. Cette variante n'est donc pas la livraison retenue.
+
+L'essai 512 prévu comme repli n'a pas été exécuté : nous avons arrêté le premier
+protocole pour corriger la fusion et les fausses alertes, avec une nouvelle
+variante explicitement exploratoire. Elle réutilise les prédictions 640 en
+cache, sans nouvel entraînement et sans nouvelle inférence du réseau.
+
+3. ÉVITER DE COMPTER TROIS FOIS LE MÊME OBJET
+
+Le même objet peut être vu par l'analyse globale et deux fenêtres. On compare
+leurs masques, pas seulement leurs rectangles.
+
+IoU = pixels communs / pixels appartenant à au moins l'un des deux masques.
+Une IoU supérieure à 0,5 déclenche une suppression de doublon entre vues.
+
+IoS = pixels communs / pixels du plus petit masque. Une IoS supérieure à 0,8
+sert aussi lorsque l'un des masques touche un bord interne de fenêtre. Cette
+condition évite d'effacer un petit objet distinct simplement parce qu'il se
+trouve dans un grand masque imprécis. Les prédictions provenant de la même
+vue ne sont pas redédoublonnées par cette règle.
+
+Le premier passage préfère une silhouette non coupée par une fenêtre, puis un score
+plus élevé ; la vue globale départage les égalités. Il conserve une silhouette,
+sans fabriquer une union de toutes les formes. Un doublon avec le modèle public
+est traité séparément à IoU > 0,6. Un train mis à vérifier ne peut pas supprimer
+un candidat déchet. Le journal AUDIT_FUSION.jsonl conserve ces décisions dans
+le résultat de travail local. Ce premier passage produit les candidats ; il ne
+constitue plus à lui seul la décision finale.
+
+Dans la variante expérimentale sélective, TOUS les masques de la vue globale sont
+conservés sans modification, sauf les trains ambigus rangés à vérifier. Les
+candidats ajoutés proviennent des masques de tuiles conservés au premier passage.
+On exige une petite aire rapportée à toute l'image, un score suffisant, aucun
+contact avec un bord de fenêtre ou d'image, et pas de recouvrement important
+avec un masque global. Rejet si IoU > 0,1 OU IoS > 0,2. Les ajouts sont traités
+par score décroissant et la même règle évite leurs doublons entre eux.
+
+La grille suivante a été figée avant son calcul : seuil d'ajout parmi
+0,35 / 0,50 / 0,65 / 0,80 ; aire maximale parmi 0,1 / 0,2 / 0,4 % de l'image.
+Cela donne 12 configurations. Une configuration doit simultanément augmenter
+AP_small et le rappel des petits objets, conserver au moins le F2 initial,
+perdre au plus 0,03 de précision et au plus 0,01 d'AP globale. Parmi celles qui
+respectent ces conditions, on choisit le meilleur rappel des petits objets,
+puis la meilleure précision. Si aucune ne passe, aucune n'est déclarée retenue.
+Les rapports donnent tous les essais et constatent l'absence de configuration
+admissible. Même le réglage 0,65 / 0,1 %, qui retrouve 110 petits masques sur 415
+au lieu de 103, diminue AP_small de 10,26 % à 8,64 %. Il n'est pas retenu.
+
+Une troisième expérience exige en plus une confirmation par une autre tuile :
+deux vues distinctes avec IoU de masque >0,5, sans compter une vue globale ni
+une simple inclusion IoS. Les mêmes 12 configurations et les mêmes 5 critères ont
+été appliqués. Aucune n'est admissible. Par exemple, 0,65 / 0,1 % retrouve 109
+petits masques, avec précision globale 51,25 %, mais AP_small 9,13 % < 10,26 %.
+On a donc arrêté ces filtres. Le programme final ne force aucun gagnant.
+
+4. LA FAUSSE DÉTECTION DE TRAIN
+
+Deux prédictions V1 recouvraient pratiquement toute la voie, alors que les
+images montraient la voie et son ballast. La correction n'est pas une liste
+d'images interdites : elle utilise la catégorie, le score et la géométrie.
+
+Une hypothèse est mise à vérifier si toutes les conditions sont réunies :
+  - nom de catégorie train ;
+  - score inférieur à 0,5 ;
+  - au moins 90 % du couloir observé couvert par le masque ;
+  - hauteur du masque au moins égale à 75 % de la hauteur de l'image ;
+  - bas du masque atteignant les derniers 5 % de l'image.
+
+Le motif est ambiguous_train_tracklike. Le masque reste disponible intégralement
+dans quarantined_predictions du TXT. Il quitte la liste des objets retenus et
+la superposition rouge principale. Le programme ne prétend pas que la voie est
+libre. Une prédiction ambiguë d'un vrai train peut aussi être mise à vérifier.
+
+Un contrôle ciblé utilise les deux erreurs connues, puis des photos distinctes
+contenant de vrais trains. Cela contrôle le comportement de la règle, sans
+constituer une estimation générale du rappel des trains.
+
+5. LA COMPARAISON CHIFFRÉE
+
+Les deux méthodes utilisent les mêmes poids et les mêmes 288 photos TACO de
+validation, avec les mêmes 871 objets de référence. Les polygones COCO d'origine,
+y compris leurs morceaux distincts, sont ramenés dans la grille des photos
+préparées, de côté maximal 1 280 pixels. Les prédictions des deux méthodes sont
+comparées à cette même référence, afin de ne pas comparer deux conversions.
+
+AP50 : aire sous la courbe précision-rappel, avec correspondance d'objet à IoU
+de masque au moins 0,50. Un score plus élevé indique un meilleur compromis
+sur les seuils considérés ; ce n'est pas le pourcentage d'images parfaites.
+
+AP50_95 : moyenne de l'AP pour les seuils IoU 0,50, 0,55, ..., 0,95. Elle exige
+progressivement des contours mieux alignés, donc elle est généralement plus
+basse qu'AP50. L'évaluation limite chaque image à 100 prédictions.
+
+AP_small : AP50_95 sur la catégorie COCO des petits masques, définie par une
+aire au plus égale à 32 × 32 pixels sur LA GRILLE PRÉPARÉE. Ce n'est pas une
+taille physique, et ce score n'est pas directement comparable à l'ancien
+AP_small calculé sur les photos en résolution originale ou sur un autre split.
+
+Pour le bilan au seuil de fonctionnement (globaux >=0,15 ; ajouts au seuil
+plus strict choisi), et avec IoU de masque au moins 0,50 :
+  précision = bonnes correspondances / toutes les observations proposées ;
+  rappel = bonnes correspondances / tous les objets de référence.
+Les correspondances sont faites un à un. Les faux positifs diminuent la
+précision ; les objets manqués diminuent le rappel. Leur rapport numérique
+est conservé avec les comptes TP, FP et FN dans le résultat de validation.
+
+Pour l'AP de la variante sélective, TOUTES les prédictions globales initiales
+dès 0,001 sont conservées, auxquelles s'ajoutent les candidats sélectifs. Pour
+le scénario vidéo, les prédictions brutes sont d'abord filtrées à 0,15 avant
+le premier dédoublonnage ; le filtre sélectif s'applique ensuite aux ajouts.
+Le seuil supplémentaire ne retire pas les globaux V1 déjà retenus.
+
+Ce jeu a servi à constater l'échec du premier essai puis à examiner deux
+grilles de 12 réglages. Ce sont toujours les MÊMES 288 photos, pas 864 photos
+indépendantes. Il reste une validation de développement
+exploratoire, pas un nouveau test final. L'ancien test public n'est pas réutilisé pour choisir
+la taille des fenêtres. Le résultat TACO ne mesure pas directement la précision
+sur le ballast, les traverses ou tous les dangers possibles dans les vidéos TSV.
+
+6. VIDÉO ET EXPORTS
+
+La vidéo est décodée avec ses horodatages natifs. Le programme vérifie l'identité
+de la source et son correspondance avec chaque ligne de rails et chaque TXT V1.
+Il traite toutes les images réellement décodées, conserve les temps, encode
+la vidéo sans son et écrit les CSV/TXT correspondants.
+
+Un candidat est retenu lorsque sa silhouette recouvre le couloir observé.
+Les masques restent des prédictions 2D. Un recouvrement de quelques pixels peut
+venir d'une erreur de contour ou de rail et ne prouve pas un risque de collision.
+
+Le suivi ByteTrack de V1 cherchait à relier les observations voisines. La V2
+corrigée conserve ces identifiants et suivis sans les recalculer. track_id peut
+changer ; track_confirmed ne certifie pas un danger. Les masques exportés sont
+ceux effectivement observés dans chaque image, sans inventer de contour pendant
+une absence. Les inconnues restent vides ou null.
+
+La géométrie V1 a déjà été vérifiée par reconstruction des masques et des
+intersections. Pour la livraison corrigée, le vérificateur indépendant démontre
+que les objets retenus sont strictement identiques à cette V1 gelée et que leurs
+lignes CSV/points sont conservées octet pour octet. Il recalcule la géométrie
+des hypothèses de train, vérifie temps, dimensions et classement. Le paquet ZIP
+contrôle chaque fichier par empreinte. Ces contrôles démontrent la cohérence
+des fichiers, pas la vérité de toutes les prédictions du réseau.
+
+7. CE QU'IL FAUT FAIRE ENSUITE POUR MESURER LE GAIN SUR TSV
+
+Constituer de courtes séquences TSV annotées, séparées des séquences utilisées
+pour régler la méthode. Inclure petits déchets, pierres, branches, objets
+partiellement cachés, ballast sans obstacle et cas difficiles. Marquer tous
+les objets pertinents, y compris ceux que le modèle ne propose pas, pour éviter
+de surestimer le rappel. Séparer les captures entières, pas seulement des images
+voisines, entre apprentissage, validation et test.
+
+Mesurer les objets manqués, les fausses alertes, la qualité des contours, la
+durée des pertes de suivi et le temps de calcul. Une période sans détection
+n'est pas automatiquement une absence d'obstacle. Pour les mètres et le gabarit
+physique, il faudra une calibration et des mesures de contrôle. Le milieu des
+rails dans l'image reste un résultat utile en pixels, avec ses temps.
+
+RÉFÉRENCES DE LA MÉTHODE
+
+Principe des fenêtres chevauchantes et de la vue globale :
+https://docs.ultralytics.com/guides/sahi-tiled-inference/
+https://github.com/obss/sahi/blob/main/docs/guides/sliced-inference.md
+
+Le projet utilise sa propre implémentation de fenêtres et de fusion des masques,
+pas un entraînement SAHI ni une dépendance SAHI installée implicitement.
+Les empreintes et paramètres des sources TACO restent ceux de la préparation V1.

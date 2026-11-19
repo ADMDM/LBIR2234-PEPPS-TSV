@@ -1,0 +1,87 @@
+import argparse
+
+
+def main():
+    parser = argparse.ArgumentParser(description="TSV : DeepLabV3+ / ResNet50 / RailSem19")
+    sub = parser.add_subparsers(dest="command", required=True)
+    p = sub.add_parser("check", help="Tester modèle, loss, backward et optimizer sur MPS/CPU")
+    p.add_argument("--device", choices=["auto", "mps", "cpu"], default="auto")
+    p.add_argument("--out")
+    p = sub.add_parser("extract", help="Extraire des frames espacées depuis une vidéo")
+    p.add_argument("--video", required=True)
+    p.add_argument("--out", required=True)
+    p.add_argument("--every", type=float, default=1.)
+    p.add_argument("--max-frames", type=int, default=300)
+    p = sub.add_parser("prepare-railsem", help="Convertir les masques d'IDs RailSem19")
+    for name in ("images", "masks", "config", "out"):
+        p.add_argument(f"--{name}", required=True)
+    p.add_argument("--sequences", help="CSV stem,sequence, groupes de capture vérifiés")
+    p = sub.add_parser("split", help="Séparer train/val/test par séquence")
+    p.add_argument("--manifest", required=True)
+    p.add_argument("--out", required=True)
+    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--val-fraction", type=float, default=.15)
+    p.add_argument("--test-fraction", type=float, default=.15)
+    p.add_argument("--allow-image-split", action="store_true", help="Seulement exploration RailSem19 si séquences inconnues")
+    p = sub.add_parser("train", help="Entraîner ou fine-tuner le modèle")
+    for name in ("train", "out"):
+        p.add_argument(f"--{name}", required=True)
+    p.add_argument("--val", help="Séquence indépendante, obligatoire hors essai sans validation")
+    p.add_argument("--training-only-demo", action="store_true", help="Premier essai sur un seul lot : aucun score de validation, checkpoint last.pt")
+    p.add_argument("--task", choices=["binary", "tsv", "corridor", "railsem_track", "railsem_egopath"], default="binary")
+    p.add_argument("--height", type=int, default=384)
+    p.add_argument("--width", type=int, default=640)
+    p.add_argument("--batch-size", type=int, default=1)
+    p.add_argument("--epochs", type=int, default=30)
+    p.add_argument("--progress-every", type=int, default=0, help="Afficher la progression toutes les N images (0=désactivé)")
+    p.add_argument("--lr", type=float, default=1e-4)
+    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--device", choices=["auto", "mps", "cpu"], default="auto")
+    p.add_argument("--cpu-threads", type=int, default=4)
+    p.add_argument("--pretrained", action="store_true", help="Télécharger/utiliser l'encodeur ImageNet")
+    p.add_argument("--init", help="Transférer encodeur+décoder depuis un checkpoint local ; nouvelle tête")
+    p.add_argument("--synthetic-demo", action="store_true", help="Marquer le checkpoint comme test sur données artificielles")
+    p = sub.add_parser("infer", help="Inférence sur une image ou un dossier")
+    p.add_argument("--input", required=True)
+    p.add_argument("--out", required=True)
+    p.add_argument("--checkpoint")
+    p.add_argument("--allow-untrained", action="store_true")
+    p.add_argument("--height", type=int)
+    p.add_argument("--width", type=int)
+    p.add_argument("--device", choices=["auto", "mps", "cpu"], default="auto")
+    p.add_argument("--cpu-threads", type=int, default=4)
+    p = sub.add_parser("infer-video", help="Créer un MP4 avec les rails prédits sur chaque image")
+    p.add_argument('--frame-telemetry', help='CSV par image source avec hash vidéo, UTC et vitesse ; filtre dans le temps réel')
+    p.add_argument('--preview',action='store_true',help='Afficher dans le navigateur le traitement en cours ; vitesse réelle non garantie')
+    p.add_argument("--keep-audio", action="store_true", help="Conserver le son d'origine ; vidéo muette par défaut")
+    p.add_argument("--smooth-display", action="store_true", help="Lisser les limites et l’axe pour l’affichage ; CSV brut et lissé séparés")
+    p.add_argument("--smoothing-tau", type=float, default=.08, help="Constante de temps du lissage causal en secondes")
+    p.add_argument("--smoothing-method", choices=["ema", "adaptive"], default="ema", help="Filtre d’affichage ; adaptive réduit son inertie lors des déplacements")
+    p.add_argument("--adaptive-min-cutoff", type=float, default=.8, help="Fréquence minimale du filtre adaptatif, en Hz")
+    p.add_argument("--adaptive-beta", type=float, default=15., help="Sensibilité à la vitesse normalisée par la largeur de l’image")
+    p.add_argument("--roi", type=int, nargs=4, metavar=('X0','Y0','X1','Y1'), help="Zone source à analyser, fin exclusive ; exports conservés dans les pixels originaux")
+    p.add_argument("--measurement-row", type=float, default=.8, help="Hauteur relative de la section mesurée, 0<valeur<1")
+    p.add_argument("--min-model-score", type=float, default=.55, help="Seuil heuristique du score local, sans garantie de précision")
+    for name in ("input", "checkpoint", "out"):
+        p.add_argument(f"--{name}", required=True)
+    p.add_argument("--max-frames", type=int, default=0, help="0=toute la vidéo ; nombre limité pour un extrait d'essai")
+    p.add_argument("--device", choices=["auto", "mps", "cpu"], default="auto")
+    p.add_argument("--cpu-threads", type=int, default=4)
+    p = sub.add_parser("evaluate", help="Métriques sur masques aux dimensions originales")
+    for name in ("checkpoint", "manifest", "out"):
+        p.add_argument(f"--{name}", required=True)
+    p.add_argument("--device", choices=["auto", "mps", "cpu"], default="auto")
+    p.add_argument("--cpu-threads", type=int, default=4)
+    args = parser.parse_args()
+    if args.command == "infer-video":
+        from .video import infer_video
+        return infer_video(args)
+    if args.command in ("prepare-railsem", "split", "extract"):
+        from .prepare import prepare_railsem, split_dataset, extract_frames
+        return {"prepare-railsem": prepare_railsem, "split": split_dataset, "extract": extract_frames}[args.command](args)
+    from .engine import check_device, train, infer, evaluate
+    return {"check": check_device, "train": train, "infer": infer, "evaluate": evaluate}[args.command](args)
+
+
+if __name__ == "__main__":
+    main()

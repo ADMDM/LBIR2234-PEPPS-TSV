@@ -1,0 +1,8 @@
+# Versions utilisées pour préparer les vidéos et les ZIP de cette livraison.
+av==19.0.2
+numpy==2.5.5
+Pillow==13.0.0
+opencv-python-headless==5.0.0.93
+shapely==2.1.2
+pyproj==3.7.2
+matplotlib==3.10.8

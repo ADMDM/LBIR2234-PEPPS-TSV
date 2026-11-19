@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "rail_checkpoint": "../models/rails.pt",
+  "public_objects_checkpoint": "../models/public_instances.pt",
+  "litter_checkpoint": "../models/litter.pt",
+  "africa_network": "../data/africa_railways_network.gpkg",
+  "belgium_network": "../data/infrabel_voies_principales.geojson",
+  "videos": [
+    {
+      "video_id": "MA_VIDEO",
+      "title": "Ma vidéo",
+      "region": "À renseigner",
+      "source": "../data/video.mp4",
+      "source_sha256": "REMPLACER_PAR_SHA256_COMPLET",
+      "new_predictions": true,
+      "rails_result": "../calculs/MA_VIDEO/rails",
+      "objects_result": "../calculs/MA_VIDEO/objets",
+      "gps_result": null,
+      "map_mode": "none",
+      "output": "../resultats/MA_VIDEO"
+    }
+  ],
+  "inference_python": "../.venv-inference/bin/python",
+  "presentation_python": "../.venv-presentation/bin/python"
+}

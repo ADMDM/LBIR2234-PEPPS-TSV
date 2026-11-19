@@ -1,0 +1,8 @@
+{
+  "latitude_column": "latitude_deg",
+  "longitude_column": "longitude_deg",
+  "time_column": "video_time_s",
+  "time_reference": "native_pts",
+  "time_offset_s": 0,
+  "max_time_delta_s": 0.1
+}

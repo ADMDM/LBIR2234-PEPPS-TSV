@@ -1,0 +1,13 @@
+# Versions observées le 2026-11-08 ; Python 3.12 arm64
+torch==2.15.0
+torchvision==0.29.2
+ultralytics==8.4.192
+opencv-python==5.0.0.93
+numpy==2.5.4
+av==19.0.2
+PyYAML==6.0.3
+faster-coco-eval==1.8.0
+Pillow==13.0.0
+scipy==1.18.1
+matplotlib==3.11.2
+lap==0.5.13

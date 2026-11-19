@@ -1,0 +1,34 @@
+GPS AUTOMATIQUE / CSV — NOTICE COURTE
+
+RAILS_GAUCHE_DROIT_GPS.csv : une ligne par image du CSV de rails initial.
+POINTS_RAILS_METRES.csv : une ligne par paire gauche/droit à la même hauteur y.
+
+Utiliser video_id + frame_index pour joindre les fichiers, puis vérifier
+video_time_s, source_video_sha256 et les dimensions de l'image.
+Les colonnes des rails, les temps et les vitesses d'origine sont conservés.
+Les nouveaux GPS sont dans gps_latitude_deg / gps_longitude_deg.
+Leur source et leur statut sont indiqués. Un champ vide ne signifie pas zéro.
+
+route_cumulative_estimate_m = distance estimée depuis le début, suivant la carte.
+route_distance_status précise observation, interpolation ou valeur indisponible.
+La durée maximale d'interpolation est de 5 s par défaut ; aucune extrapolation.
+Un point GPS rejeté n'est pas remplacé par un faux relevé.
+route_progress_m_per_video_second est une moyenne par seconde de VIDEO,
+pas une vitesse instantanée réelle. gps_speed_provided_m_s est une vitesse
+reçue dans le CSV source, non mesurée par notre algorithme. Les champs
+train_speed_* éventuellement déjà présents restent ceux du fichier d'origine.
+
+L'écartement nominal vient de la ligne cartographiée lorsqu'elle est identifiée.
+Le défaut 1,676 m est un scénario de dimensionnement. Les colonnes nominal/design
+restent distinctes. Si le réseau ne couvre pas la région, le nominal et le
+parcours cartographique restent inconnus : on ne choisit pas un pays au hasard.
+
+Mètres des points : approximation locale g/(x_droit-x_gauche), origine à la
+verticale médiane de l'image. Y reste en pixels. Ce n'est pas un repère 3D ni
+une calibration de caméra. La largeur égale g par construction.
+La précision terrain et l'erreur réelle restent inconnues sans référence.
+Les résidus GPS-carte et les scores OCR ne sont pas des erreurs de détection.
+
+Le CSV d'origine peut déjà contenir latitude_deg/longitude_deg : ces champs
+historiques sont conservés ; utiliser gps_* pour la nouvelle lecture V2.
+Aucune prédiction des rails n'a été recalculée dans cette étape de localisation.

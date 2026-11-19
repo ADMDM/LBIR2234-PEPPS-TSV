@@ -1,0 +1,8 @@
+auto_save: false
+flags:
+  reviewed: false
+labels:
+  - couloir
+  - ignore
+sort_labels: false
+validate_label: exact
