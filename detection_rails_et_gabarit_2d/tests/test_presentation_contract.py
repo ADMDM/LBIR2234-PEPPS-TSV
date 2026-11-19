@@ -5,7 +5,7 @@ import json
 import sys
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'rails_deeplab/presentation'))
-from build_video import geometry_transform, compact_rail_row, smooth_existing
+from build_video import geometry_transform, compact_rail_row, smooth_existing, format_video_time
 from map_view import gps_quality
 from inspect_source import location
 
@@ -17,6 +17,11 @@ def rail(t=0,left=100,right=200):
 
 
 class PresentationContract(unittest.TestCase):
+    def test_clock_carries_rounded_seconds_into_minutes(self):
+        self.assertEqual(format_video_time(59.9666667), '01:00.0')
+        self.assertEqual(format_video_time(179.9666667), '03:00.0')
+        self.assertEqual(format_video_time(1521.4), '25:21.4')
+
     def test_metadata_position_does_not_claim_time(self):
         p=location('+01.2500+002.5000/')  # Synthetic parsing example.
         self.assertFalse(p['coordinate_time_known'])

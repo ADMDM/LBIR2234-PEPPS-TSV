@@ -46,6 +46,14 @@ def csv_write(path, rows, fields=None):
         writer.writeheader();writer.writerows(rows)
 
 
+def format_video_time(seconds):
+    """Round before splitting minutes; 59.97 s must display 01:00.0."""
+    deciseconds=max(0,math.floor(float(seconds)*10+.5))
+    minutes,remainder=divmod(deciseconds,600)
+    seconds,tenths=divmod(remainder,10)
+    return f'{minutes:02d}:{seconds:02d}.{tenths}'
+
+
 def pairs(row):
     left,right=json.loads(row['left_segments_json']),json.loads(row['right_segments_json'])
     if len(left)!=len(right):raise ValueError('Different numbers of rail segments')
@@ -173,7 +181,7 @@ def paint_frame(frame,row,objects,reviews,mapview,layout,title,region,total_time
         d.rounded_rectangle((px,legend_y+4,px+38,legend_y+20),radius=3,fill='#c8d0ca' if color=='#080a0b' else BG)
         d.line([(px+3,legend_y+12),(px+35,legend_y+12)],fill=color,width=2)
         d.text((px+48,legend_y),text,font=font(18),fill=MUTED)
-    t=float(row['video_time_s']);time_text=f'{int(t)//60:02d}:{t%60:04.1f} / {int(total_time)//60:02d}:{total_time%60:04.1f}'
+    t=float(row['video_time_s']);time_text=f'{format_video_time(t)} / {format_video_time(total_time)}'
     d.text((1472,989),time_text,font=font(22,True),fill=TEXT)
     d.text((1472,1022),f"Image source {row['frame_index']}",font=font(17),fill=MUTED)
     d.text((32,1049),'Prototype : recouvrement 2D, pas une alerte de collision. Mètres sous hypothèses.',font=font(16),fill='#7e9096')
@@ -347,6 +355,11 @@ def build(config,video_id,preview=False):
 
 
 def readme(job,rows,counts,review_ids,tr,mapview):
+    original_note = ''
+    if job.get('orientation_original'):
+        original_note = (f"\nSource avant redressement : {Path(job['orientation_original']).name}\n"
+                         f"SHA-256 avant redressement : {job.get('orientation_original_sha256', 'non renseignée')}\n"
+                         f"Écart maximal des temps après redressement : {job.get('orientation_max_timestamp_error_s', 'non renseigné')} s.\n")
     return f'''{job['title']} — Rails, gabarit 2D et GPS
 
 OUVRIR EN PREMIER
@@ -365,6 +378,7 @@ VIDÉO ET SYNCHRONISATION
 Identifiant : {job['video_id']}
 Source : {Path(job['source']).name}
 Empreinte SHA-256 : {job['source_sha256']}
+{original_note}
 Images décodées : {len(rows)} ; temps natifs : {float(rows[0]['video_time_s']):.6f}
 à {float(rows[-1]['video_time_s']):.6f} secondes.
 Joindre les CSV avec video_id + frame_index ; vérifier aussi le temps vidéo.
