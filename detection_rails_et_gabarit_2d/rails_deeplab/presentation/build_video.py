@@ -439,6 +439,7 @@ gauche 3,74 px / droite 5,43 px sur 12 images de développement, une seule captu
 Ces valeurs ne sont PAS les erreurs connues de chaque frame des vidéos livrées.
 Le modèle de déchets reste faible pour les petits objets ; aucun gain nouveau
 sur ce point n'est démontré ici. Cartographie : {mapview.attribution or 'non disponible'}.
+{('Source du réseau : Colombo et al., AfTS-Db v3, CC BY 4.0.\nhttps://zenodo.org/records/17861120' if job['map_mode'] in ('africa', 'metadata') else 'Source du réseau : Infrabel, voies principales, CC0.\nhttps://opendata.infrabel.be/explore/dataset/geosporen/' if job['map_mode']=='belgium' else '')}
 '''
 
 
