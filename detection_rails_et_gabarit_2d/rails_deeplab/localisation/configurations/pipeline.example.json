@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "video_id": "ma_video",
+  "source_video": "/chemin/vers/video.mp4",
+  "gps": {
+    "mode": "ocr",
+    "config": "ocr_tsv_03383.json",
+    "network": "../donnees/africa_railways_network.gpkg",
+    "rails_csv": "/chemin/vers/RAILS_ORIGINAUX.csv",
+    "design_gauge_m": 1.676
+  },
+  "gabarit_result": "/chemin/vers/gabarit_2d_verifie",
+  "render_connected": true,
+  "output_dir": "/chemin/vers/nouvelle_livraison"
+}

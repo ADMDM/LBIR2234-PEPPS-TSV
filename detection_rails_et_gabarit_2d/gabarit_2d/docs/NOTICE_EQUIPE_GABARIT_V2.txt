@@ -1,0 +1,178 @@
+GABARIT 2D — VERSION 2 CORRIGÉE : RÉFÉRENCE CONSERVÉE, TRAIN À VÉRIFIER
+===================================================================
+
+COMMENCER PAR CES FICHIERS
+
+1. VIDEO_GABARIT_2D.mp4 : voir le résultat et retrouver un instant.
+2. OBJETS.csv : une ligne par objet prédit dans une image.
+3. RAILS.csv : limites intérieures des rails et axe médian, en pixels.
+4. TXT/ : un fichier par image, avec tous les points des contours.
+
+POINTS_OBJETS.csv contient les mêmes points que les TXT pour les objets retenus.
+Choisissez le format qui convient à votre programme ; ne comptez pas les deux
+comme des détections différentes. FRAMES.csv donne une ligne par image, y compris
+lorsqu'il n'y a aucun objet retenu.
+
+A_VERIFIER.csv contient les hypothèses mises à part. Elles ne sont pas des
+obstacles confirmés, mais ne doivent pas être transformées en « voie libre ».
+Leurs contours sont disponibles dans la liste quarantined_predictions du TXT.
+
+RESULTATS_OBTENUS.txt résume les résultats réellement produits.
+MANIFESTE.json et VERIFICATION.json servent à retracer et contrôler le calcul.
+VALIDATION/ contient les rapports des trois expériences de validation publique.
+
+CE QUI CHANGE
+
+La livraison finale conserve exactement les objets de la référence V1,
+leurs silhouettes, identifiants, suivis et coordonnées. Elle met seulement
+à vérifier les hypothèses de train décrites ci-dessous.
+
+La recherche de petits objets a été testée avec des vues rapprochées, puis
+12 filtres plus sélectifs, puis 12 réglages exigeant une confirmation dans
+deux vues différentes. Aucun de ces 25 réglages n'a satisfait tous les critères
+de qualité annoncés. Ils retrouvaient parfois davantage de petits objets,
+mais dégradaient la précision ou la qualité de leurs contours. Ils ne sont
+donc pas activés dans cette livraison. Il n'y a pas de gain validé pour les
+petits objets dans la V2 corrigée. Les résultats négatifs restent documentés.
+
+Les poids du modèle restent ceux de l'entraînement TACO déjà effectué : cette
+V2 corrige le classement des hypothèses de train, elle n'est pas un nouvel
+entraînement. Les limites des rails et l'axe restent ceux de la livraison V1.
+
+Une hypothèse de « train » peu confiante qui recouvre presque toute la voie,
+s'étend sur presque toute la hauteur et atteint le bas de l'image est mise
+à vérifier. Cela corrige l'affichage du faux train connu sans désactiver la
+catégorie train. Un vrai train peut aussi être ambigu : la règle ne prouve
+jamais qu'il n'y a rien sur la voie. Elle est documentée dans le manifeste.
+
+La livraison contient un seul résultat fusionné de notre équipe. model_source
+indique seulement quel modèle a produit une silhouette ; vous n'avez pas à
+refaire notre fusion. Les identifiants d'objets et de suivi de V1 sont conservés.
+Pour comparer les deux versions, utilisez d'abord les images et les temps.
+
+COMMENT RACCORDER LES DONNÉES
+
+Clé commune : video_id + frame_index. frame_index commence à zéro et suit
+l'ordre des images réellement décodées. Pour les objets d'une même image,
+observation_id distingue les observations. Ne joindre avec track_id que si
+vous cherchez un suivi dans le temps ; il peut être absent ou changer.
+
+time_video_s est le temps de la vidéo source :
+    source_pts × time_base_num / time_base_den
+Ne pas le remplacer par frame_index / 30. La vidéo source comporte des
+irrégularités de cadence. Une vidéo de 180 secondes ne contient pas forcément
+exactement 5 400 images décodables. Aucun instant n'a été inventé pour remplir
+des trous. Cette livraison traite les images natives, pas un relevé par seconde.
+
+Les CSV sont en UTF-8, séparés par des virgules, avec un point décimal.
+Une cellule vide signifie inconnu. Dans les TXT, les valeurs inconnues sont null.
+Les TXT sont des documents JSON lisibles, malgré leur extension .txt.
+
+Toutes les coordonnées sont des centres de pixels de l'image originale :
+origine en haut à gauche, x vers la droite, y vers le bas. image_width et
+image_height donnent les dimensions. Pour redimensionner ou recadrer, appliquer
+la même transformation aux images, aux rails, à l'axe et aux objets.
+Ces coordonnées ne sont pas des mètres. La V2 n'ajoute ni vitesse GPS ni
+calibration : elle conserve l'identité et les temps nécessaires aux jointures.
+
+QUELLE ZONE EST OBSERVÉE ?
+
+Le couloir est l'espace compris entre les limites intérieures des rails aux
+hauteurs où les limites sont disponibles. On retient un candidat si sa
+silhouette recouvre au moins un pixel de ce couloir observé.
+
+Une petite intersection au bord reste fragile. Elle ne démontre pas qu'une
+personne, un véhicule ou un objet sera heurté. Le recouvrement est dans l'image,
+pas dans un volume 3D. Le véhicule peut dépasser la largeur entre les rails :
+le gabarit physique complet doit être défini séparément.
+
+support_status=partial signifie qu'une partie de la silhouette est à une
+hauteur où les limites du couloir sont inconnues. Ne pas supposer cette partie
+hors du couloir. touches_image_border et touches_crop_border signalent une
+troncature possible.
+
+LES DEUX GÉOMÉTRIES D'UN OBJET
+
+full_predicted_mask_contours / geometry_kind=full_predicted_mask :
+    silhouette complète prédite, y compris sa partie hors du couloir.
+
+corridor_intersection_contours / geometry_kind=corridor_intersection :
+    uniquement les pixels communs à la silhouette et au couloir observé.
+    Un bord qui suit le rail peut venir du découpage, pas du bord de l'objet.
+
+Un objet peut avoir plusieurs morceaux et des trous. Conserver contour_id,
+component_id, parent_contour_id, is_hole et depth. Les points suivent l'ordre
+point_index ; le dernier se raccorde au premier lorsque closed=True. Un contour
+peut aussi n'être qu'un point ou une ligne très fine (boundary_kind).
+La fonction object_masks() fournie reconstruit les masques en respectant cela.
+
+Dans les TXT de la V2 finale (schema_version=3), objects contient les observations retenues.
+quarantined_predictions contient séparément les hypothèses à vérifier.
+OBJETS.csv et POINTS_OBJETS.csv contiennent uniquement objects.
+A_VERIFIER.csv résume uniquement quarantined_predictions ; ses points complets
+se trouvent dans le TXT indiqué par txt_file. review_reason explique la mise
+à part. Aucune de ces deux listes ne représente une vérité terrain.
+
+POUR L'AXE ET LES RAILS
+
+Utiliser y_px, left_display_px, right_display_px et axis_display_px avec
+display_valid=True. À une hauteur donnée, l'axe est le milieu des deux limites.
+Respecter segment_index et les interruptions de validité : ne pas relier
+automatiquement des segments séparés. *_raw_px correspond aux sorties brutes ;
+*_display_px aux sorties utilisées pour l'affichage et le couloir de ce calcul.
+
+COMPRENDRE LES SCORES
+
+confidence_score est un score du modèle entre 0 et 1. Ce n'est ni le pourcentage
+de précision mesuré sur cette image ni une erreur en pixels.
+track_confirmed signifie plusieurs observations associées, pas danger confirmé.
+Le suivi associe des identifiants ; les contours ne sont pas extrapolés pendant
+une disparition. class_name donne une catégorie, pas un niveau de danger.
+
+mask_pixel_count : nombre de pixels de la silhouette complète.
+overlap_pixel_count : nombre de pixels communs avec le couloir.
+overlap_fraction : overlap_pixel_count / mask_pixel_count.
+Ces surfaces sont des pixels comptés. L'aire mathématique d'un polygone reliant
+leurs centres peut différer ; utiliser les comptages du masque pour les surfaces.
+
+objects=[] signifie aucune observation retenue, pas voie certifiée libre.
+Une image peut avoir des hypothèses à vérifier ou une zone de voie inconnue.
+distance_m, actual_error_px, mask_quality_score et physical_danger_confirmed
+restent inconnus. Ne pas remplacer les valeurs vides par zéro. Une erreur réelle
+par image exige une annotation de référence ; les mètres exigent une géométrie
+calibrée et des distances de contrôle.
+
+LECTURE MINIMALE AVEC PYTHON
+
+Garder lire_contours.py et corridor_geometry.py dans le même dossier.
+
+    from lire_contours import load_frame, object_masks
+    frame = load_frame("TXT/frame_000000.txt")
+    print(frame["time_video_s"], frame["frame_index"])
+    for objet in frame["objects"]:
+        complet, interieur = object_masks(
+            objet, frame["image_width"], frame["image_height"])
+        print(objet["class_name"], objet["observation_id"])
+    for hypothese in frame.get("quarantined_predictions", []):
+        print("À vérifier :", hypothese["review_reason"])
+
+Lecture sans modèle ni GPU :
+    python lire_contours.py --frame-file TXT/frame_000000.txt
+
+Reconstruction facultative des masques retenus dans un nouveau dossier :
+    python lire_contours.py --frame-file TXT/frame_000000.txt --out masques_frame0
+
+La lecture nécessite seulement Python. La reconstruction nécessite numpy et
+opencv-python. La vérification des empreintes garantit que les contours
+reproduisent les masques exportés ; elle ne prouve pas la justesse de la prédiction.
+
+LIMITES RESTANTES
+
+Les petits objets flous ou très lointains peuvent rester invisibles. Pierres,
+branches et objets inhabituels ne sont pas couverts exhaustivement par les
+catégories apprises. La validation TACO permet de comparer les méthodes sur
+des déchets annotés ; elle ne donne pas une précision certifiée sur la vidéo TSV.
+Les comptes d'observations répètent les objets sur les images successives.
+Pour mesurer un taux de détection TSV, il faut annoter des séquences distinctes
+avec les objets présents ET les absences, puis compter les objets manqués,
+les fausses alertes et la précision des contours.

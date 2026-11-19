@@ -1,0 +1,11 @@
+{
+  "latitude_column": "latitude",
+  "longitude_column": "longitude",
+  "time_column": "video_time_s",
+  "time_reference": "native_pts",
+  "time_offset_s": 0,
+  "max_time_delta_s": 0.1,
+  "speed_column": "speed_kmh",
+  "speed_unit": "km/h",
+  "utc_column": "utc_time"
+}

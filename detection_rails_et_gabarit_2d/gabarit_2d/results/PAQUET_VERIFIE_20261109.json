@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "sha256": "5d89e5a9f3e013985889a414b13c786b7b500c004be4c10a6f0bccecc956869f",
+  "entries": 5330,
+  "bytes": 237168824,
+  "txt_files_checked": 5308,
+  "all_entries_sha256_verified": true,
+  "method": "baseline_with_train_review",
+  "small_object_gain_validated": false,
+  "selective_additions": 0,
+  "exact_baseline_preservation_verified": true,
+  "rejected_experiments": 3,
+  "rejected_configurations": 25,
+  "weights_included": false,
+  "raw_training_images_included": false,
+  "zip_filename": "GABARIT_2D_V2_03383_20261109.zip",
+  "scope": "Verified local delivery package; binary archive and actual observations are shared separately, not published in Git."
+}

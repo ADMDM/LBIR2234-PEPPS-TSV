@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/pedropro/TACO",
+  "commit": "70479ad9adc3da971a8ae75ac97eb1026910eec7",
+  "files": {
+    "data/annotations.json": {
+      "sha256": "812c2e3f0d336b437f276597715de2abb08bb8a641599c45f593d233ec66457b",
+      "bytes": 2988946,
+      "url": "https://raw.githubusercontent.com/pedropro/TACO/70479ad9adc3da971a8ae75ac97eb1026910eec7/data/annotations.json"
+    },
+    "README.md": {
+      "sha256": "67f00bd7e5c031100fa4b697591a302436032367500d3a2651df567e87c90e0f",
+      "bytes": 4210,
+      "url": "https://raw.githubusercontent.com/pedropro/TACO/70479ad9adc3da971a8ae75ac97eb1026910eec7/README.md"
+    },
+    "LICENSE": {
+      "sha256": "2280878a21e4c4a9ff18e232c78182ac1300b3fd3641a1db1b503d1e2b7d4443",
+      "bytes": 1074,
+      "url": "https://raw.githubusercontent.com/pedropro/TACO/70479ad9adc3da971a8ae75ac97eb1026910eec7/LICENSE"
+    }
+  }
+}

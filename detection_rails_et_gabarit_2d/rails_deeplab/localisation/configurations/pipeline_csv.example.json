@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "video_id": "ma_video",
+  "source_video": "/chemin/vers/video.mp4",
+  "gps": {
+    "mode": "csv",
+    "config": "csv_standard.json",
+    "gps_csv": "/chemin/vers/positions.csv",
+    "network": "../donnees/africa_railways_network.gpkg",
+    "rails_csv": "/chemin/vers/RAILS_ORIGINAUX.csv"
+  },
+  "render_connected": false,
+  "output_dir": "/chemin/vers/nouvelle_livraison"
+}

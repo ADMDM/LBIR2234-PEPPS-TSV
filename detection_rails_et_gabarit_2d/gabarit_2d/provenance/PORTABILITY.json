@@ -1,0 +1,56 @@
+{
+  "scope": "Portable source publication; not a rerun of model accuracy. Experimental snapshots remain immutable.",
+  "changes": [
+    {
+      "file": "rail_io.py",
+      "experimental_source_sha256": "3fe6da18fd5578ac339e5158121a7d0f54b3b710ca81c32a542c546a0b9b7c0c",
+      "published_source_sha256": "49bc4bbd952e37d78a0b240279aeef75e3a4223fd4beda487fec0900ac488bcb",
+      "change": "Import hashlib for the standalone SHA helper; geometry unchanged."
+    },
+    {
+      "file": "infer_gabarit_2d.py",
+      "experimental_source_sha256": "605365e8b23891e652d0a1eb890d39be416a412e0256f08581390a6e22cf6904",
+      "published_source_sha256": "901ea7343d6c7dcc7c9a86f87c7d295e0659d0a36bb78e0d74526987b00669ef",
+      "change": "Use bundled rail_io and platform temporary directory; add explicit source-video override retaining SHA proof; resolve parameter paths."
+    },
+    {
+      "file": "verify_gabarit_2d.py",
+      "experimental_source_sha256": "670328b0068e58b42f546f85c1a659b263c19b4f6feb5514c1d2a87d2b2bb849",
+      "published_source_sha256": "0cad25e2f3d6c90f5971bef51e5ad5ac5fd225899bfc629a9a13461a1e0935f5",
+      "change": "Accept explicitly relocated identical native source while preserving source SHA and all input/output proofs."
+    },
+    {
+      "file": "test_infer_gabarit_2d.py",
+      "experimental_source_sha256": "08fd16fe66dd58f08aa12fce709f6a5981c8c159f791014096ed566a1cd10cbb",
+      "published_source_sha256": "cb70c59f6bbaa18c23a0279ed1ab33f411e4859504f7a040c6cbc746c4c29c6e",
+      "change": "Use the platform temporary directory for synthetic tests."
+    },
+    {
+      "file": "selection_evidence.py",
+      "experimental_source_sha256": "f6ba87bd7dfb12fb4804532ec0a81eb07adeaaaaa72b7d6e3411aa345ffb469f",
+      "published_source_sha256": "f7a5cc5a8910c8ffdafac8032e2543a803067216e767ab53bc52dc846319f550",
+      "change": "Remove one trailing blank line only; bytecode and behavior unchanged."
+    }
+  ],
+  "unchanged_inference_helper": {
+    "file": "small_object_refinement.py",
+    "sha256": "b147e4aa1002d6759a3b534f534213d9b45a42dfdeb634ac8df8ffd98d0f5d0e"
+  },
+  "validation": {
+    "cpu_existing_synthetic_tests_passed": 195,
+    "cpu_relocation_tests_passed": 3,
+    "gpu_inference_run_by_tests": false,
+    "environment": "Python 3.12 macOS arm64; package versions in requirements.txt",
+    "cpu_complete_publication_suite_passed": 315,
+    "cpu_complete_suite_elapsed_seconds": 8.591,
+    "cpu_complete_suite_date": "2026-11-09"
+  },
+  "exclusions": [
+    "real images",
+    "real annotations",
+    "videos",
+    "GPS records",
+    "trained weights",
+    "private absolute paths"
+  ]
+}

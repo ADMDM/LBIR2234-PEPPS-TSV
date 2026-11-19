@@ -1,0 +1,6 @@
+numpy==2.5.5
+shapely==2.1.2
+pyproj==3.7.2
+matplotlib==3.10.8
+pillow==13.0.0
+av==19.0.2

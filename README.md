@@ -1,8 +1,20 @@
-# TSV : détection du couloir ferroviaire et de l’axe médian
+# TSV : détection des rails et gabarit 2D
 
 Projet **LBIR2234 - Data Sciences PEPPS**. Le programme segmente la voie parcourue, calcule ses deux limites et leur milieu dans l’image, puis exporte une vidéo et des CSV pour l’équipe gabarit.
 
 **État du 18 octobre 2026 : prototype expérimental hors ligne.** Les 12 images TSV servent au développement ; les mètres restent conditionnels. Ce dépôt contient le code, les tests, les configurations réutilisables et les résultats agrégés. Les vidéos, annotations, GPS et poids entraînés doivent être obtenus séparément dans l’espace de travail autorisé du groupe.
+
+## Version actuelle : détection des rails et gabarit 2D
+
+La version du 19 novembre 2026 est regroupée dans
+[detection_rails_et_gabarit_2d](detection_rails_et_gabarit_2d/README.md).
+Elle réunit les rails, le lissage, les contours d’objets et la localisation GPS,
+avec un lanceur unique et un Makefile. Les vidéos de présentation utilisent
+un axe noir discret. Les ZIP de données destinés à l’équipe gabarit contiennent
+uniquement une vidéo, les CSV et un LIRE_MOI ; ils sont partagés séparément du code.
+Les mètres sont des conversions sous hypothèses, sans calibration 3D validée.
+
+Le bilan historique ci-dessous reste celui du 18 octobre 2026.
 
 ## Lire dans cet ordre
 

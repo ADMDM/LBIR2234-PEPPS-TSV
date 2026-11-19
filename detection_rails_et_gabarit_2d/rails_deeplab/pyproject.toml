@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tsv-deeplab"
+version = "0.1.0"
+description = "TSV track corridor segmentation, median axis and video/CSV exports"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+[project.scripts]
+railtsv = "railtsv.cli:main"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["railtsv*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

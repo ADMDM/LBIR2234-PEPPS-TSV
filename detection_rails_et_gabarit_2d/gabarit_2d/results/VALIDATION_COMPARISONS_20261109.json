@@ -1,0 +1,1378 @@
+{
+  "date": "2026-11-09",
+  "split": "val",
+  "images": 288,
+  "reference_objects": 871,
+  "checkpoint_sha256": "85986c011c6298d0f000b12c89d9d43375269242037734261faa4170285884ba",
+  "dataset_sha256": "e53db97c51c90f542fc4cd82bb2daca8c65534d817f161c5d07ea2a74a89003f",
+  "ground_truth_grid": "prepared image pixels",
+  "AP_small_area_definition": "canonical raster area <= 32^2 prepared pixels; not source-grid area or physical size",
+  "baseline": {
+    "AP50_95": 0.34548411322334194,
+    "AP50": 0.5195148393405296,
+    "AP75": 0.36408937667993296,
+    "AP_small": 0.10257833887444444,
+    "AP_medium": 0.47534726493682483,
+    "AP_large": 0.6537603056257643,
+    "AR1": 0.24006888633754303,
+    "AR10": 0.4164179104477612,
+    "AR100": 0.477382319173364,
+    "AR_small": 0.2785542168674699,
+    "AR_medium": 0.5957364341085272,
+    "AR_large": 0.7414141414141414
+  },
+  "baseline_operating": {
+    "confidence": 0.15,
+    "mask_iou": 0.5,
+    "true_positive": 446,
+    "false_positive": 413,
+    "false_negative": 425,
+    "precision": 0.519208381839348,
+    "recall": 0.5120551090700345,
+    "F2": 0.5134699516463275,
+    "small_reference_count": 415,
+    "small_true_positive": 103,
+    "small_recall": 0.24819277108433735,
+    "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+  },
+  "initial_tiled640": {
+    "metrics": {
+      "AP50_95": 0.3269714755512098,
+      "AP50": 0.49799791326706416,
+      "AP75": 0.3429952623816035,
+      "AP_small": 0.1089769951170689,
+      "AP_medium": 0.47059859248231767,
+      "AP_large": 0.5576795113235432,
+      "AR1": 0.22502870264064292,
+      "AR10": 0.438231917336395,
+      "AR100": 0.5227324913892079,
+      "AR_small": 0.3730120481927711,
+      "AR_medium": 0.6306201550387597,
+      "AR_large": 0.6974747474747475
+    },
+    "operating": {
+      "confidence": 0.15,
+      "mask_iou": 0.5,
+      "true_positive": 577,
+      "false_positive": 2150,
+      "false_negative": 294,
+      "precision": 0.2115878254492116,
+      "recall": 0.6624569460390356,
+      "F2": 0.4644984704556432,
+      "small_reference_count": 415,
+      "small_true_positive": 208,
+      "small_recall": 0.5012048192771085,
+      "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+    },
+    "eligible": false,
+    "rule": {
+      "split": "val",
+      "first_tile_size": 640,
+      "fallback_tile_size": 512,
+      "overlap": 0.25,
+      "inference_imgsz": 960,
+      "confidence_floor": 0.001,
+      "operating_confidence": 0.15,
+      "max_detections_per_image": 100,
+      "eligibility": "AP_small strictly improves and AP50_95 >= baseline AP50_95 - 0.01",
+      "fallback": "Only if 640 is ineligible, evaluate 512; retain best eligible AP_small. If neither eligible, investigate without claiming improvement.",
+      "test_data_used_for_selection": false,
+      "operating_rule": "Filter raw global and tile scores before cross-view mask deduplication, then keep highest-score 100."
+    }
+  },
+  "exploratory_selective": {
+    "selected_config": null,
+    "selected_eligible": false,
+    "rule": {
+      "name": "exploratory_selective_tiles_v1",
+      "prior_640_recipe": "rejected; original selection protocol abandoned explicitly; no 512 trial",
+      "split": "val",
+      "images": 288,
+      "reference_objects": 871,
+      "tile_size": 640,
+      "nominal_overlap": 0.25,
+      "network_imgsz": 960,
+      "operating_baseline_confidence": 0.15,
+      "ap_baseline_confidence": 0.001,
+      "confidence_grid": [
+        0.35,
+        0.5,
+        0.65,
+        0.8
+      ],
+      "area_fraction_grid": [
+        0.001,
+        0.002,
+        0.004
+      ],
+      "first_stage": "merge_multiscale(raw globals>=.15, raw tiles>=.15), keep tile survivors, no first-stage max100 truncation",
+      "addition_rules": "score>=minimum; mask area/(image_width*image_height)<=maximum; no crop-border or image-border contact; reject if mask IoU>.1 OR IoS>.2 with any operating baseline mask; process additions by descending score then stable candidate ID and reject the same overlaps with earlier selected additions",
+      "baseline_policy": "preserve every baseline mask; no replacement, union or suppression, including all low-score AP globals>=.001",
+      "ap_policy": "all unchanged global AP predictions plus selected additions; COCO maxDets100 only inside evaluation",
+      "operating_policy": "all unchanged global predictions>=.15 plus selected additions; score-sorted max100 only inside metric evaluation",
+      "eligibility": {
+        "precision": ">= baseline precision - .03",
+        "small_recall": "> baseline small recall",
+        "F2": ">= baseline F2",
+        "AP_small": "> baseline AP_small",
+        "AP50_95": ">= baseline AP50_95 - .01"
+      },
+      "ranking": "highest operating small recall, then highest operating precision; exact ties use frozen grid order",
+      "test_used": false,
+      "limitation": "Exploratory tuning on the same development validation, not an independent test or TSV obstacle-accuracy proof."
+    },
+    "configuration_sha256": "7ecd13402d0b57c9405efb878cc725b876410ab5e734fdbc3e2ddfbd4c28f07e",
+    "candidates": [
+      {
+        "grid_index": 0,
+        "min_confidence": 0.35,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.3412515007727172,
+          "AP50": 0.5120454284868641,
+          "AP75": 0.3607247028135976,
+          "AP_small": 0.07940220185353597,
+          "AP_medium": 0.47373300820103315,
+          "AP_large": 0.6537661173973827,
+          "AR1": 0.23421354764638344,
+          "AR10": 0.4276693455797934,
+          "AR100": 0.48461538461538456,
+          "AR_small": 0.29373493975903614,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 493,
+          "false_positive": 664,
+          "false_negative": 378,
+          "precision": 0.4261019878997407,
+          "recall": 0.56601607347876,
+          "F2": 0.531135531135531,
+          "small_reference_count": 415,
+          "small_true_positive": 150,
+          "small_recall": 0.3614457831325301,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 298,
+        "ap_truncation": {
+          "images_above_max100": 124,
+          "predictions_beyond_max100": 259
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 1,
+        "min_confidence": 0.35,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.33988402053641453,
+          "AP50": 0.5089117715699015,
+          "AP75": 0.35936090632956097,
+          "AP_small": 0.07971803375478509,
+          "AP_medium": 0.46880303222683545,
+          "AP_large": 0.6537677229765478,
+          "AR1": 0.23168771526980483,
+          "AR10": 0.42962112514351325,
+          "AR100": 0.4851894374282434,
+          "AR_small": 0.2939759036144578,
+          "AR_medium": 0.5972868217054264,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 496,
+          "false_positive": 699,
+          "false_negative": 375,
+          "precision": 0.41506276150627613,
+          "recall": 0.5694603903559128,
+          "F2": 0.5300277837144689,
+          "small_reference_count": 415,
+          "small_true_positive": 151,
+          "small_recall": 0.363855421686747,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 336,
+        "ap_truncation": {
+          "images_above_max100": 132,
+          "predictions_beyond_max100": 287
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 2,
+        "min_confidence": 0.35,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.33935565561670633,
+          "AP50": 0.5074752754429802,
+          "AP75": 0.35879963305088797,
+          "AP_small": 0.07971814861046898,
+          "AP_medium": 0.4675658841142036,
+          "AP_large": 0.6537677229765478,
+          "AR1": 0.230654420206659,
+          "AR10": 0.4299655568312285,
+          "AR100": 0.48541905855338696,
+          "AR_small": 0.2939759036144578,
+          "AR_medium": 0.5980620155038759,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 500,
+          "false_positive": 726,
+          "false_negative": 371,
+          "precision": 0.4078303425774878,
+          "recall": 0.574052812858783,
+          "F2": 0.5307855626326963,
+          "small_reference_count": 415,
+          "small_true_positive": 151,
+          "small_recall": 0.363855421686747,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 367,
+        "ap_truncation": {
+          "images_above_max100": 137,
+          "predictions_beyond_max100": 313
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 3,
+        "min_confidence": 0.5,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.3427947594453287,
+          "AP50": 0.5138896597671014,
+          "AP75": 0.3616204379170642,
+          "AP_small": 0.082509679576089,
+          "AP_medium": 0.4744862215406425,
+          "AP_large": 0.6537645146955909,
+          "AR1": 0.2345579793340987,
+          "AR10": 0.4237657864523537,
+          "AR100": 0.4815154994259473,
+          "AR_small": 0.28722891566265063,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 471,
+          "false_positive": 506,
+          "false_negative": 400,
+          "precision": 0.4820880245649949,
+          "recall": 0.5407577497129736,
+          "F2": 0.527908540685945,
+          "small_reference_count": 415,
+          "small_true_positive": 128,
+          "small_recall": 0.30843373493975906,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 118,
+        "ap_truncation": {
+          "images_above_max100": 70,
+          "predictions_beyond_max100": 102
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 4,
+        "min_confidence": 0.5,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.34181665797994,
+          "AP50": 0.511763447060048,
+          "AP75": 0.360606771930268,
+          "AP_small": 0.08269417766768805,
+          "AP_medium": 0.4702092100402229,
+          "AP_large": 0.6537645146955909,
+          "AR1": 0.23295063145809417,
+          "AR10": 0.425028702640643,
+          "AR100": 0.4818599311136625,
+          "AR_small": 0.2874698795180723,
+          "AR_medium": 0.5965116279069768,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 473,
+          "false_positive": 520,
+          "false_negative": 398,
+          "precision": 0.47633434038267874,
+          "recall": 0.5430539609644087,
+          "F2": 0.5282555282555282,
+          "small_reference_count": 415,
+          "small_true_positive": 129,
+          "small_recall": 0.3108433734939759,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 134,
+        "ap_truncation": {
+          "images_above_max100": 74,
+          "predictions_beyond_max100": 112
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 5,
+        "min_confidence": 0.5,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.3414497128169737,
+          "AP50": 0.5106682043327115,
+          "AP75": 0.3593953755879169,
+          "AP_small": 0.08269425875116809,
+          "AP_medium": 0.469694574950181,
+          "AP_large": 0.6537661173973827,
+          "AR1": 0.23191733639494827,
+          "AR10": 0.42514351320321475,
+          "AR100": 0.482089552238806,
+          "AR_small": 0.2874698795180723,
+          "AR_medium": 0.5972868217054264,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 477,
+          "false_positive": 533,
+          "false_negative": 394,
+          "precision": 0.47227722772277225,
+          "recall": 0.547646383467279,
+          "F2": 0.5307076101468625,
+          "small_reference_count": 415,
+          "small_true_positive": 129,
+          "small_recall": 0.3108433734939759,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 151,
+        "ap_truncation": {
+          "images_above_max100": 81,
+          "predictions_beyond_max100": 126
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 6,
+        "min_confidence": 0.65,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.342905368019066,
+          "AP50": 0.5140866205394831,
+          "AP75": 0.362253342220681,
+          "AP_small": 0.08639074836113611,
+          "AP_medium": 0.4753476580731103,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23788748564867968,
+          "AR10": 0.41802525832376586,
+          "AR100": 0.478300803673938,
+          "AR_small": 0.28048192771084335,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 453,
+          "false_positive": 436,
+          "false_negative": 418,
+          "precision": 0.5095613048368954,
+          "recall": 0.5200918484500574,
+          "F2": 0.5179510633432426,
+          "small_reference_count": 415,
+          "small_true_positive": 110,
+          "small_recall": 0.26506024096385544,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 30,
+        "ap_truncation": {
+          "images_above_max100": 23,
+          "predictions_beyond_max100": 25
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 7,
+        "min_confidence": 0.65,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.3417429789768967,
+          "AP50": 0.5121582949211602,
+          "AP75": 0.36100341052041074,
+          "AP_small": 0.08577809116342607,
+          "AP_medium": 0.47187753110927966,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23685419058553384,
+          "AR10": 0.41802525832376586,
+          "AR100": 0.478300803673938,
+          "AR_small": 0.28048192771084335,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 453,
+          "false_positive": 439,
+          "false_negative": 418,
+          "precision": 0.507847533632287,
+          "recall": 0.5200918484500574,
+          "F2": 0.5175959780621572,
+          "small_reference_count": 415,
+          "small_true_positive": 110,
+          "small_recall": 0.26506024096385544,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 33,
+        "ap_truncation": {
+          "images_above_max100": 25,
+          "predictions_beyond_max100": 27
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 8,
+        "min_confidence": 0.65,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.34070726160553416,
+          "AP50": 0.5108737455374055,
+          "AP75": 0.3589373376520175,
+          "AP_small": 0.0857780966444079,
+          "AP_medium": 0.468611789690873,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23685419058553384,
+          "AR10": 0.41802525832376586,
+          "AR100": 0.478300803673938,
+          "AR_small": 0.28048192771084335,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 454,
+          "false_positive": 443,
+          "false_negative": 417,
+          "precision": 0.5061315496098104,
+          "recall": 0.521239954075775,
+          "F2": 0.5181465418854143,
+          "small_reference_count": 415,
+          "small_true_positive": 110,
+          "small_recall": 0.26506024096385544,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 38,
+        "ap_truncation": {
+          "images_above_max100": 26,
+          "predictions_beyond_max100": 29
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 9,
+        "min_confidence": 0.8,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.34479503931149896,
+          "AP50": 0.5184430649267406,
+          "AP75": 0.36331388281260696,
+          "AP_small": 0.10030767483421546,
+          "AP_medium": 0.47534726493682483,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23926521239954074,
+          "AR10": 0.4164179104477612,
+          "AR100": 0.477382319173364,
+          "AR_small": 0.2785542168674699,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 446,
+          "false_positive": 414,
+          "false_negative": 425,
+          "precision": 0.5186046511627908,
+          "recall": 0.5120551090700345,
+          "F2": 0.5133517495395948,
+          "small_reference_count": 415,
+          "small_true_positive": 103,
+          "small_recall": 0.24819277108433735,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": false,
+          "F2": false,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 1,
+        "ap_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 10,
+        "min_confidence": 0.8,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.3441077880508767,
+          "AP50": 0.5173978314452818,
+          "AP75": 0.3625450465622178,
+          "AP_small": 0.10030768104340772,
+          "AP_medium": 0.4727359170570212,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23823191733639493,
+          "AR10": 0.4164179104477612,
+          "AR100": 0.477382319173364,
+          "AR_small": 0.2785542168674699,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 446,
+          "false_positive": 415,
+          "false_negative": 425,
+          "precision": 0.5180023228803716,
+          "recall": 0.5120551090700345,
+          "F2": 0.5132336018411967,
+          "small_reference_count": 415,
+          "small_true_positive": 103,
+          "small_recall": 0.24819277108433735,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": false,
+          "F2": false,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 2,
+        "ap_truncation": {
+          "images_above_max100": 1,
+          "predictions_beyond_max100": 1
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 11,
+        "min_confidence": 0.8,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.3438391568591047,
+          "AP50": 0.5173891485738705,
+          "AP75": 0.3611110065524097,
+          "AP_small": 0.10030768173986507,
+          "AP_medium": 0.4714974982546995,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23823191733639493,
+          "AR10": 0.4164179104477612,
+          "AR100": 0.477382319173364,
+          "AR_small": 0.2785542168674699,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 447,
+          "false_positive": 416,
+          "false_negative": 424,
+          "precision": 0.5179606025492468,
+          "recall": 0.513203214695752,
+          "F2": 0.5141476880607315,
+          "small_reference_count": 415,
+          "small_true_positive": 103,
+          "small_recall": 0.24819277108433735,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": false,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 4,
+        "ap_truncation": {
+          "images_above_max100": 2,
+          "predictions_beyond_max100": 2
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      }
+    ]
+  },
+  "scope": "Development validation only; no improvement configuration selected by either declared protocol; not TSV obstacle performance or physical danger accuracy.",
+  "exploratory_consensus": {
+    "selected_config": null,
+    "selected_eligible": false,
+    "rule": {
+      "name": "exploratory_multiview_confirmation_v1",
+      "prior_640_recipe": "rejected; original selection protocol abandoned explicitly; no 512 trial",
+      "previous_selective_recipe": "all 12 configurations rejected; no earlier criterion relaxed",
+      "confirmation_rule": "at least two distinct tile views including the kept candidate; a direct suppression audit record with rule cross_view_mask_iou and mask_iou>.5 must link the other tile to that kept candidate ID/view; globals and IoS-only records do not count; no score or mask changes",
+      "split": "val",
+      "images": 288,
+      "reference_objects": 871,
+      "tile_size": 640,
+      "nominal_overlap": 0.25,
+      "network_imgsz": 960,
+      "operating_baseline_confidence": 0.15,
+      "ap_baseline_confidence": 0.001,
+      "confidence_grid": [
+        0.35,
+        0.5,
+        0.65,
+        0.8
+      ],
+      "area_fraction_grid": [
+        0.001,
+        0.002,
+        0.004
+      ],
+      "first_stage": "merge_multiscale(raw globals>=.15, raw tiles>=.15), keep tile survivors, no first-stage max100 truncation",
+      "addition_rules": "score>=minimum; mask area/(image_width*image_height)<=maximum; no crop-border or image-border contact; reject if mask IoU>.1 OR IoS>.2 with any operating baseline mask; process additions by descending score then stable candidate ID and reject the same overlaps with earlier selected additions",
+      "baseline_policy": "preserve every baseline mask; no replacement, union or suppression, including all low-score AP globals>=.001",
+      "ap_policy": "all unchanged global AP predictions plus selected additions; COCO maxDets100 only inside evaluation",
+      "operating_policy": "all unchanged global predictions>=.15 plus selected additions; score-sorted max100 only inside metric evaluation",
+      "eligibility": {
+        "precision": ">= baseline precision - .03",
+        "small_recall": "> baseline small recall",
+        "F2": ">= baseline F2",
+        "AP_small": "> baseline AP_small",
+        "AP50_95": ">= baseline AP50_95 - .01"
+      },
+      "ranking": "highest operating small recall, then highest operating precision; exact ties use frozen grid order",
+      "test_used": false,
+      "limitation": "Exploratory tuning on the same development validation, not an independent test or TSV obstacle-accuracy proof."
+    },
+    "configuration_sha256": "7100d529acfece61ccfb73f53075b84e30a214b0a261ef8ed34c9bfaa276993d",
+    "candidates": [
+      {
+        "grid_index": 0,
+        "min_confidence": 0.35,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.3421314598887094,
+          "AP50": 0.5141714642231117,
+          "AP75": 0.36175411281810355,
+          "AP_small": 0.08295304091441764,
+          "AP_medium": 0.474319204675724,
+          "AP_large": 0.6537645146955909,
+          "AR1": 0.23547646383467274,
+          "AR10": 0.42296211251435134,
+          "AR100": 0.4823191733639495,
+          "AR_small": 0.2889156626506024,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 477,
+          "false_positive": 575,
+          "false_negative": 394,
+          "precision": 0.4534220532319392,
+          "recall": 0.547646383467279,
+          "F2": 0.5257936507936508,
+          "small_reference_count": 415,
+          "small_true_positive": 134,
+          "small_recall": 0.3228915662650602,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 193,
+        "ap_truncation": {
+          "images_above_max100": 97,
+          "predictions_beyond_max100": 164
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 1,
+        "min_confidence": 0.35,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.34154342440794205,
+          "AP50": 0.5121314266865259,
+          "AP75": 0.361547648090372,
+          "AP_small": 0.08415919837410499,
+          "AP_medium": 0.4706261402504179,
+          "AP_large": 0.6537661173973827,
+          "AR1": 0.23467278989667045,
+          "AR10": 0.42491389207807123,
+          "AR100": 0.4828932261768083,
+          "AR_small": 0.2891566265060241,
+          "AR_medium": 0.5972868217054264,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 480,
+          "false_positive": 595,
+          "false_negative": 391,
+          "precision": 0.44651162790697674,
+          "recall": 0.5510907003444316,
+          "F2": 0.5264312349199385,
+          "small_reference_count": 415,
+          "small_true_positive": 135,
+          "small_recall": 0.3253012048192771,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 216,
+        "ap_truncation": {
+          "images_above_max100": 103,
+          "predictions_beyond_max100": 180
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 2,
+        "min_confidence": 0.35,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.3417241575741065,
+          "AP50": 0.5122927071158409,
+          "AP75": 0.3612413904299894,
+          "AP_small": 0.08415923146309055,
+          "AP_medium": 0.4714644096605424,
+          "AP_large": 0.6537661173973827,
+          "AR1": 0.23467278989667045,
+          "AR10": 0.4243398392652124,
+          "AR100": 0.48300803673938014,
+          "AR_small": 0.2891566265060241,
+          "AR_medium": 0.5976744186046512,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 483,
+          "false_positive": 610,
+          "false_negative": 388,
+          "precision": 0.44190301921317476,
+          "recall": 0.5545350172215844,
+          "F2": 0.5276381909547738,
+          "small_reference_count": 415,
+          "small_true_positive": 135,
+          "small_recall": 0.3253012048192771,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 234,
+        "ap_truncation": {
+          "images_above_max100": 105,
+          "predictions_beyond_max100": 195
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 3,
+        "min_confidence": 0.5,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.3438919089749417,
+          "AP50": 0.5161432651881837,
+          "AP75": 0.36366155498686825,
+          "AP_small": 0.0866519391458834,
+          "AP_medium": 0.47470463533186397,
+          "AP_large": 0.6537629148634351,
+          "AR1": 0.23628013777267504,
+          "AR10": 0.42158438576349033,
+          "AR100": 0.4808266360505167,
+          "AR_small": 0.2857831325301205,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 464,
+          "false_positive": 479,
+          "false_negative": 407,
+          "precision": 0.49204665959703076,
+          "recall": 0.5327210103329506,
+          "F2": 0.5240569234244409,
+          "small_reference_count": 415,
+          "small_true_positive": 121,
+          "small_recall": 0.29156626506024097,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 84,
+        "ap_truncation": {
+          "images_above_max100": 52,
+          "predictions_beyond_max100": 70
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 4,
+        "min_confidence": 0.5,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.34330100099026056,
+          "AP50": 0.5140261722722013,
+          "AP75": 0.3632239787432733,
+          "AP_small": 0.08787616192752162,
+          "AP_medium": 0.47079568229906044,
+          "AP_large": 0.6537629148634351,
+          "AR1": 0.23547646383467277,
+          "AR10": 0.42284730195177955,
+          "AR100": 0.481171067738232,
+          "AR_small": 0.28602409638554216,
+          "AR_medium": 0.5965116279069768,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 466,
+          "false_positive": 488,
+          "false_negative": 405,
+          "precision": 0.48846960167714887,
+          "recall": 0.5350172215843858,
+          "F2": 0.5250112663361876,
+          "small_reference_count": 415,
+          "small_true_positive": 122,
+          "small_recall": 0.29397590361445786,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 95,
+        "ap_truncation": {
+          "images_above_max100": 53,
+          "predictions_beyond_max100": 76
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 5,
+        "min_confidence": 0.5,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.3436055720029663,
+          "AP50": 0.5145865159433641,
+          "AP75": 0.36288939227272515,
+          "AP_small": 0.08787618701049221,
+          "AP_medium": 0.4721555331727487,
+          "AP_large": 0.6537645146955909,
+          "AR1": 0.23547646383467277,
+          "AR10": 0.4236509758897819,
+          "AR100": 0.4812858783008037,
+          "AR_small": 0.28602409638554216,
+          "AR_medium": 0.5968992248062016,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 469,
+          "false_positive": 496,
+          "false_negative": 402,
+          "precision": 0.48601036269430054,
+          "recall": 0.5384615384615384,
+          "F2": 0.5270847381434031,
+          "small_reference_count": 415,
+          "small_true_positive": 122,
+          "small_recall": 0.29397590361445786,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": false,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 106,
+        "ap_truncation": {
+          "images_above_max100": 58,
+          "predictions_beyond_max100": 86
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 6,
+        "min_confidence": 0.65,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.34418506212543204,
+          "AP50": 0.5161964631239742,
+          "AP75": 0.36415701321917976,
+          "AP_small": 0.09128410975015719,
+          "AP_medium": 0.47534735494060304,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23960964408725602,
+          "AR10": 0.41745120551090703,
+          "AR100": 0.478300803673938,
+          "AR_small": 0.28048192771084335,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 452,
+          "false_positive": 430,
+          "false_negative": 419,
+          "precision": 0.5124716553287982,
+          "recall": 0.5189437428243399,
+          "F2": 0.5176362803481447,
+          "small_reference_count": 415,
+          "small_true_positive": 109,
+          "small_recall": 0.26265060240963856,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 23,
+        "ap_truncation": {
+          "images_above_max100": 17,
+          "predictions_beyond_max100": 18
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 7,
+        "min_confidence": 0.65,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.34321287156855945,
+          "AP50": 0.5146261089676161,
+          "AP75": 0.36308922361223445,
+          "AP_small": 0.09128411453763088,
+          "AP_medium": 0.4718772284083986,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23857634902411018,
+          "AR10": 0.41745120551090703,
+          "AR100": 0.478300803673938,
+          "AR_small": 0.28048192771084335,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 452,
+          "false_positive": 432,
+          "false_negative": 419,
+          "precision": 0.5113122171945701,
+          "recall": 0.5189437428243399,
+          "F2": 0.5173992673992673,
+          "small_reference_count": 415,
+          "small_true_positive": 109,
+          "small_recall": 0.26265060240963856,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 25,
+        "ap_truncation": {
+          "images_above_max100": 18,
+          "predictions_beyond_max100": 19
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 8,
+        "min_confidence": 0.65,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.3432065892080979,
+          "AP50": 0.5149148847106858,
+          "AP75": 0.3619695969278699,
+          "AP_small": 0.09128412002166013,
+          "AP_medium": 0.4715859095855967,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23857634902411018,
+          "AR10": 0.41745120551090703,
+          "AR100": 0.478300803673938,
+          "AR_small": 0.28048192771084335,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 453,
+          "false_positive": 434,
+          "false_negative": 418,
+          "precision": 0.5107102593010147,
+          "recall": 0.5200918484500574,
+          "F2": 0.518188057652711,
+          "small_reference_count": 415,
+          "small_true_positive": 109,
+          "small_recall": 0.26265060240963856,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": true,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 28,
+        "ap_truncation": {
+          "images_above_max100": 19,
+          "predictions_beyond_max100": 21
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 9,
+        "min_confidence": 0.8,
+        "max_area_fraction": 0.001,
+        "metrics": {
+          "AP50_95": 0.34479503931149896,
+          "AP50": 0.5184430649267406,
+          "AP75": 0.36331388281260696,
+          "AP_small": 0.10030767483421546,
+          "AP_medium": 0.47534726493682483,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23926521239954074,
+          "AR10": 0.4164179104477612,
+          "AR100": 0.477382319173364,
+          "AR_small": 0.2785542168674699,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 446,
+          "false_positive": 414,
+          "false_negative": 425,
+          "precision": 0.5186046511627908,
+          "recall": 0.5120551090700345,
+          "F2": 0.5133517495395948,
+          "small_reference_count": 415,
+          "small_true_positive": 103,
+          "small_recall": 0.24819277108433735,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": false,
+          "F2": false,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 1,
+        "ap_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 10,
+        "min_confidence": 0.8,
+        "max_area_fraction": 0.002,
+        "metrics": {
+          "AP50_95": 0.3441077880508767,
+          "AP50": 0.5173978314452818,
+          "AP75": 0.3625450465622178,
+          "AP_small": 0.10030768104340772,
+          "AP_medium": 0.4727359170570212,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23823191733639493,
+          "AR10": 0.4164179104477612,
+          "AR100": 0.477382319173364,
+          "AR_small": 0.2785542168674699,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 446,
+          "false_positive": 415,
+          "false_negative": 425,
+          "precision": 0.5180023228803716,
+          "recall": 0.5120551090700345,
+          "F2": 0.5132336018411967,
+          "small_reference_count": 415,
+          "small_true_positive": 103,
+          "small_recall": 0.24819277108433735,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": false,
+          "F2": false,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 2,
+        "ap_truncation": {
+          "images_above_max100": 1,
+          "predictions_beyond_max100": 1
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      },
+      {
+        "grid_index": 11,
+        "min_confidence": 0.8,
+        "max_area_fraction": 0.004,
+        "metrics": {
+          "AP50_95": 0.34437966206478576,
+          "AP50": 0.5182548469667234,
+          "AP75": 0.3617026494229821,
+          "AP_small": 0.10030768173986507,
+          "AP_medium": 0.4732554913757242,
+          "AP_large": 0.6537603056257643,
+          "AR1": 0.23823191733639493,
+          "AR10": 0.4164179104477612,
+          "AR100": 0.477382319173364,
+          "AR_small": 0.2785542168674699,
+          "AR_medium": 0.5957364341085272,
+          "AR_large": 0.7414141414141414
+        },
+        "operating": {
+          "confidence": 0.15,
+          "mask_iou": 0.5,
+          "true_positive": 447,
+          "false_positive": 415,
+          "false_negative": 424,
+          "precision": 0.5185614849187935,
+          "recall": 0.513203214695752,
+          "F2": 0.514265991716521,
+          "small_reference_count": 415,
+          "small_true_positive": 103,
+          "small_recall": 0.24819277108433735,
+          "scope": "micro counts on prepared-grid non-crowd TACO VAL masks, after raw-score filtering and fusion; not TSV safety accuracy"
+        },
+        "eligible": false,
+        "eligibility_checks": {
+          "precision": true,
+          "small_recall": false,
+          "F2": true,
+          "AP_small": false,
+          "AP50_95": true
+        },
+        "additions": 3,
+        "ap_truncation": {
+          "images_above_max100": 2,
+          "predictions_beyond_max100": 2
+        },
+        "operating_truncation": {
+          "images_above_max100": 0,
+          "predictions_beyond_max100": 0
+        }
+      }
+    ]
+  },
+  "delivery_decision": "Preserve original V1 masks and apply train quarantine only; no tiled addition is accepted as a validated improvement.",
+  "evaluated_configurations": 25
+}

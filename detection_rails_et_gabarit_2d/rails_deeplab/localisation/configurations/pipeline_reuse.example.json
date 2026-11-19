@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "video_id": "ma_video",
+  "source_video": "/chemin/vers/video.mp4",
+  "localisation_result": "/chemin/vers/resultat_gps_complet",
+  "gabarit_result": "/chemin/vers/gabarit_2d_verifie",
+  "render_connected": true,
+  "output_dir": "/chemin/vers/nouvelle_livraison"
+}
