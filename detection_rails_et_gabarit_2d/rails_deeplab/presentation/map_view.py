@@ -184,7 +184,13 @@ class MapView:
         if abs(self.times[i]-t)<=1e-6:return self.xy[i],'mapped_at_gps_observation'
         if i>=len(self.times)-1 or self.times[i+1]-self.times[i]>5:return None,'withheld_gap'
         points=self.by_interval.get(i)
-        if not points:return None,'route_interval_unavailable'
+        if not points:
+            # Repeated/quantized GPS coordinates create a zero-length interval,
+            # hence no route_piece. Their constant interpolation is still defined.
+            # This does not establish zero physical train speed.
+            if math.dist(self.xy[i],self.xy[i+1])<=1e-6:
+                return self.xy[i],'constant_between_equal_gps_positions'
+            return None,'route_interval_unavailable'
         return along_path(points,(t-self.times[i])/(self.times[i+1]-self.times[i])),'interpolated_on_route'
 
     def image(self,t):

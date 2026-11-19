@@ -6,7 +6,7 @@ import sys
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'rails_deeplab/presentation'))
 from build_video import geometry_transform, compact_rail_row, smooth_existing, format_video_time
-from map_view import gps_quality
+from map_view import gps_quality, MapView
 from inspect_source import location
 
 
@@ -17,6 +17,18 @@ def rail(t=0,left=100,right=200):
 
 
 class PresentationContract(unittest.TestCase):
+    def test_equal_gps_positions_keep_marker_without_inventing_a_path(self):
+        view=MapView.__new__(MapView)
+        view.mode='africa';view.times=[0,1];view.xy=[(100,200),(100,200)]
+        view.by_interval={}
+        point,status=view.position(.5)
+        self.assertEqual(point,(100,200))
+        self.assertEqual(status,'constant_between_equal_gps_positions')
+        view.xy[1]=(110,200)
+        self.assertEqual(view.position(.5),(None,'route_interval_unavailable'))
+        view.xy[1]=(100,200);view.times=[0,6]
+        self.assertEqual(view.position(.5),(None,'withheld_gap'))
+
     def test_clock_carries_rounded_seconds_into_minutes(self):
         self.assertEqual(format_video_time(59.9666667), '01:00.0')
         self.assertEqual(format_video_time(179.9666667), '03:00.0')

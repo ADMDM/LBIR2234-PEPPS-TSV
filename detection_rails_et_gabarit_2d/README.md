@@ -90,6 +90,11 @@ https://opendata.infrabel.be/explore/dataset/geosporen/ (CC0).
 Les réseaux sont traités localement : aucune trace GPS n'est envoyée au
 fournisseur de cartes. La carte belge montre le GPS sur le réseau, sans
 certifier la voie exacte. Sans GPS, aucun trajet n'est inventé.
+Deux positions GPS identiques conservent un repère fixe entre ces lectures ;
+cela ne constitue pas une mesure de vitesse nulle. Les lacunes trop longues
+restent masquées. Le programme `presentation/refresh_map_overlay.py` permet
+de mettre à jour uniquement la carte d'une livraison déjà vérifiée, avec
+sauvegarde de la version précédente et contrôle complet des horodatages.
 
 ## Lissage et coordonnées
 
