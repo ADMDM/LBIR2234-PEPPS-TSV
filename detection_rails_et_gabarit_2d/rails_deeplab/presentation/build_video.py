@@ -368,6 +368,8 @@ Empreinte SHA-256 : {job['source_sha256']}
 Images décodées : {len(rows)} ; temps natifs : {float(rows[0]['video_time_s']):.6f}
 à {float(rows[-1]['video_time_s']):.6f} secondes.
 Joindre les CSV avec video_id + frame_index ; vérifier aussi le temps vidéo.
+Le temps s'appelle video_time_s dans les CSV rails, et time_video_s dans les
+CSV objets. Les deux désignent le même instant de la même vidéo, en secondes.
 frame_index commence à 0 et compte les images réellement décodées. Le temps
 est celui du fichier, jamais recalculé par frame_index / une cadence supposée.
 La vidéo conserve tous ces instants et les éventuelles lacunes de décodage.
@@ -413,7 +415,7 @@ terrain revendiqué pour cette livraison. La détection a été exécutée sur l
 nouveaux clips avec les modèles sélectionnés précédemment.
 
 RÉSULTATS ET LIMITES
-Objets : {sum(counts.values()) if job.get('objects_result') else 'non analysés'} observations retenues ; {len(review_ids)} à relire.
+{f'Objets : {sum(counts.values())} observations retenues ; {len(review_ids)} à relire.' if job.get('objects_result') else 'Les objets ne sont pas analysés sur cette vidéo ; seuls les rails et le GPS sont livrés.'}
 Une observation correspond à un objet prédit sur une image : le même objet peut
 revenir dans plusieurs images. Un recouvrement 2D ne confirme pas un danger
 physique ; aucun objet détecté ne certifie pas une voie libre.

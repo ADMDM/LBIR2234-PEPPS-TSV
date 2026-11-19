@@ -114,6 +114,9 @@ dans le projet. `RAILS.csv` contient une ligne par image, avec les deux limites
 et l'axe. `POINTS_RAILS.csv` détaille les sections ; `OBJETS.csv` et
 `POINTS_OBJETS.csv` décrivent les observations et les contours, lorsqu'ils ont
 été calculés. Les hypothèses de train ambiguës restent dans `A_VERIFIER.csv`.
+La jointure utilise `video_id` et `frame_index`. Le champ de temps est
+`video_time_s` dans les CSV rails et `time_video_s` dans les CSV objets ;
+ce sont les mêmes secondes vidéo. Une valeur manquante n'est pas un zéro.
 
 La conversion transversale utilise un écartement cartographié lorsqu'il est
 résolu, ou l'hypothèse dimensionnante de 1,676 m. Ce n'est pas une calibration
